@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Apr 04, 2022 at 09:47 PM
+-- Generation Time: Apr 04, 2022 at 10:21 PM
 -- Server version: 8.0.17
 -- PHP Version: 7.3.10
 
@@ -25,6 +25,34 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `charge`
+--
+
+CREATE TABLE `charge` (
+  `Charge_ID` varchar(255) NOT NULL,
+  `Invoice_ID` varchar(255) NOT NULL,
+  `Description` varchar(255) NOT NULL,
+  `Tax` float NOT NULL,
+  `Price` float NOT NULL,
+  `ChargeTime` datetime NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `invoice`
+--
+
+CREATE TABLE `invoice` (
+  `Invoice_ID` varchar(255) NOT NULL,
+  `Format` varchar(255) NOT NULL,
+  `Date_created` date NOT NULL,
+  `Date_due` date NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `payment`
 --
 
@@ -39,6 +67,21 @@ CREATE TABLE `payment` (
 --
 
 --
+-- Indexes for table `charge`
+--
+ALTER TABLE `charge`
+  ADD PRIMARY KEY (`Charge_ID`,`Invoice_ID`),
+  ADD UNIQUE KEY `Charge_ID` (`Charge_ID`),
+  ADD UNIQUE KEY `Invoice_ID` (`Invoice_ID`);
+
+--
+-- Indexes for table `invoice`
+--
+ALTER TABLE `invoice`
+  ADD PRIMARY KEY (`Invoice_ID`),
+  ADD UNIQUE KEY `Invoice_ID` (`Invoice_ID`);
+
+--
 -- Indexes for table `payment`
 --
 ALTER TABLE `payment`
@@ -49,6 +92,12 @@ ALTER TABLE `payment`
 --
 -- Constraints for dumped tables
 --
+
+--
+-- Constraints for table `charge`
+--
+ALTER TABLE `charge`
+  ADD CONSTRAINT `ChargeFK` FOREIGN KEY (`Invoice_ID`) REFERENCES `invoice` (`Invoice_ID`) ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 --
 -- Constraints for table `payment`
