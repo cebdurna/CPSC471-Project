@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Apr 04, 2022 at 09:31 PM
+-- Generation Time: Apr 04, 2022 at 09:46 PM
 -- Server version: 8.0.17
 -- PHP Version: 7.3.10
 
@@ -43,7 +43,8 @@ CREATE TABLE `invoice` (
 -- Indexes for table `invoice`
 --
 ALTER TABLE `invoice`
-  ADD PRIMARY KEY (`Invoice_ID`);
+  ADD PRIMARY KEY (`Invoice_ID`),
+  ADD UNIQUE KEY `Invoice_ID` (`Invoice_ID`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

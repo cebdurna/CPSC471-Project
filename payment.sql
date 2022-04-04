@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Apr 04, 2022 at 09:31 PM
+-- Generation Time: Apr 04, 2022 at 09:47 PM
 -- Server version: 8.0.17
 -- PHP Version: 7.3.10
 
@@ -43,7 +43,8 @@ CREATE TABLE `payment` (
 --
 ALTER TABLE `payment`
   ADD PRIMARY KEY (`Transaction_Number`,`Invoice_ID`),
-  ADD KEY `PaymentFK` (`Invoice_ID`);
+  ADD UNIQUE KEY `Invoice_ID` (`Invoice_ID`),
+  ADD UNIQUE KEY `Transaction_Number` (`Transaction_Number`);
 
 --
 -- Constraints for dumped tables

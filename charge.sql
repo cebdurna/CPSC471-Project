@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Apr 04, 2022 at 09:31 PM
+-- Generation Time: Apr 04, 2022 at 09:46 PM
 -- Server version: 8.0.17
 -- PHP Version: 7.3.10
 
@@ -46,7 +46,8 @@ CREATE TABLE `charge` (
 --
 ALTER TABLE `charge`
   ADD PRIMARY KEY (`Charge_ID`,`Invoice_ID`),
-  ADD KEY `ChargeFK` (`Invoice_ID`);
+  ADD UNIQUE KEY `Charge_ID` (`Charge_ID`),
+  ADD UNIQUE KEY `Invoice_ID` (`Invoice_ID`);
 
 --
 -- Constraints for dumped tables
