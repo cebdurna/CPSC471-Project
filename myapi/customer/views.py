@@ -7,7 +7,6 @@ from django.db import connection
 # Create your views here.
 
 class Booking(APIView):
-    permission_classes = [IsAuthenticated]
 
     def get(self, request):
         #if request.query_params["jwt"]
