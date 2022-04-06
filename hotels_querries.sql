@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Apr 04, 2022 at 10:35 PM
+-- Generation Time: Apr 06, 2022 at 11:41 PM
 -- Server version: 8.0.17
 -- PHP Version: 7.3.10
 
@@ -19,8 +19,23 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Database: `hotel`
+-- Database: `hotels`
 --
+
+CREATE DATABASE hotels;
+
+USE hotels;
+
+DELIMITER $$
+--
+-- Procedures
+--
+CREATE DEFINER=`root`@`localhost` PROCEDURE `customerloginget` (IN `username` VARCHAR(255), IN `password` VARCHAR(255))  NO SQL
+SELECT Customer_ID
+FROM customer
+WHERE customer.Username = username AND customer.Password = password$$
+
+DELIMITER ;
 
 -- --------------------------------------------------------
 
@@ -159,7 +174,8 @@ CREATE TABLE `paid_with` (
 CREATE TABLE `payment` (
   `Transaction_Number` int(11) NOT NULL,
   `Invoice_ID` varchar(255) NOT NULL,
-  `Amount` float NOT NULL
+  `Amount` float NOT NULL,
+  `Date` date NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
@@ -172,8 +188,8 @@ CREATE TABLE `room` (
   `Number` int(11) NOT NULL,
   `Hotel_ID` varchar(255) NOT NULL,
   `Type` varchar(255) NOT NULL,
-  `Beds` int(11) NOT NULL,
-  `Floor` int(11) NOT NULL,
+  `Beds` varchar(255) NOT NULL,
+  `Floor` varchar(255) NOT NULL,
   `Furniture` varchar(255) NOT NULL,
   `Capacity` int(11) NOT NULL,
   `Orientation` varchar(255) NOT NULL,
