@@ -21,7 +21,7 @@ class Login(APIView):
         with connection.cursor() as cursor:
             cursor.callproc('customerloginget', [request.query_params["username"], request.query_params["password"]])
             dicts = dictfetchall(cursor)
-            return Response(next(iter(dicts)))
+            return Response(dicts)
         return Response()
         
 class Booking(APIView):
@@ -29,6 +29,34 @@ class Booking(APIView):
         with connection.cursor() as cursor:
             cursor.callproc('customerbookingget', [request.query_params["customerID"]])
             dicts = dictfetchall(cursor)
+            return Response(dicts)
+        return Response()
+
+class Invoice_Detail(APIView):
+    def get(self, request):
+        with connection.cursor() as cursor:
+            cursor.callproc('customerinvoicedetailcharges', [request.query_params["invoiceID"]])
+            
+            charges = dictfetchall(cursor)
+            
+            cursor.close()
+            
+            cursor = connection.cursor()
+            
+            cursor.callproc('customerinvoicedetailpayments', [request.query_params["invoiceID"]])
+            
+            payments = dictfetchall(cursor)
+            finaldict = {"Charges": charges, "Payments":payments}
+            return Response(finaldict)
+        return Response()
+        
+class Invoice(APIView):
+    def get(self, request):
+        with connection.cursor() as cursor:
+            cursor.callproc('customerinvoiceget', [request.query_params["customerID"]])
+            
+            dicts = dictfetchall(cursor)
+            
             return Response(dicts)
         return Response()
 
