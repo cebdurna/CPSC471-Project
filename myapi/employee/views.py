@@ -22,7 +22,7 @@ class Charge(APIView):
     def post(self, request):
         #if request.query_params["jwt"]
         with connection.cursor() as cursor:
-            cursor.callproc('')
+            cursor.callproc('employee_invoice_detail_charge', [request.query_params["invoice_id"], request.query_params["description"], request.query_params["tax"], request.query_params["price"],request.query_params["charge_time"]])
             dicts = dictfetchall(cursor)
         return Response(dicts)
 
