@@ -22,6 +22,10 @@ SET time_zone = "+00:00";
 -- Database: `hotels`
 --
 
+CREATE DATABASE hotels;
+
+USE hotels;
+
 DELIMITER $$
 --
 -- Procedures
@@ -47,6 +51,59 @@ insert into payment(Invoice_ID, Amount, Date) values(invoice_id, amount, date);
 DO SLEEP(0.2);
 insert into paid_with values(cc_no,LAST_INSERT_ID(),invoice_id);
 END$$
+
+DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `customerbookingget`(IN `customerID` VARCHAR(255))
+    NO SQL
+SELECT booking.Number, booked_at.Room_Number, booking.Check_In_Date, booking.Check_Out_Date, booking.CC_Number, booking.Invoice_ID, Sum(charge.Tax + charge.Price)
+
+FROM (((booking JOIN booked_at ON booking.Number=booked_at.Booking_Number AND booking.Customer_ID=booked_at.Customer_ID)
+     	JOIN room ON room.Number=booked_at.Room_Number AND room.Hotel_ID=booked_at.Hotel_ID)
+        		JOIN charge ON charge.Invoice_ID=booking.Invoice_ID)
+
+WHERE booking.Customer_ID=customerID
+
+GROUP BY Invoice_ID$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `customerinvoicedetailcharges`(IN `invoiceID` VARCHAR(255))
+    NO SQL
+SELECT charge.Description, charge.Price, charge.Tax, charge.ChargeTime
+FROM charge
+WHERE charge.Invoice_ID=invoiceID$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `customerinvoiceget`(IN `customerID` VARCHAR(255))
+    NO SQL
+SELECT invoice.Invoice_ID, invoice.Format, invoice.Date_created, invoice.Date_due, booking.Number as booking_no, SUM(charge.Price + charge.Tax) as total, payments.TotalAmount as total_paid
+FROM (((invoice JOIN booking ON invoice.Invoice_ID=booking.Invoice_ID)
+      JOIN charge ON invoice.Invoice_ID=charge.Invoice_ID)
+      		JOIN (
+                SELECT payment.Invoice_ID, SUM(payment.Amount) as TotalAmount
+                FROM payment
+                GROUP BY payment.Invoice_ID) payments ON invoice.Invoice_ID=payments.Invoice_ID)
+WHERE booking.Customer_ID=customerID
+
+GROUP BY Invoice_ID$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `customerloginget`(IN `username` VARCHAR(255), IN `password` VARCHAR(255))
+    NO SQL
+SELECT Customer_ID
+FROM customer
+WHERE customer.Username = username AND customer.Password = password$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `customerinvoicedetailpayments`(IN `invoiceID` VARCHAR(255))
+    NO SQL
+SELECT payment.Transaction_Number, paid_with.CC_Number, payment.Amount, payment.Date
+FROM (payment JOIN paid_with ON payment.Transaction_Number=paid_with.Transaction_Number AND payment.Invoice_ID=paid_with.Invoice_ID)
+WHERE paid_with.Invoice_ID=invoiceID$$
+DELIMITER ;
 
 DELIMITER ;
 
