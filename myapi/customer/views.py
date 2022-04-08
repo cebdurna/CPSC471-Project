@@ -18,9 +18,10 @@ class Booking(APIView):
 
 
 class Registration(APIView):
-    def get(self, request):
+    def post(self, request):
+        #if request.query_params["jwt"]
         with connection.cursor() as cursor:
-            cursor.callproc('customerlogin')
+            cursor.callproc('customer_registration_post',[request.query_params["username"],request.query_params["password"],request.query_params["phone_no"], request.query_params["email"], request.query_params["birthdate"], request.query_params["name"]])
             dicts = dictfetchall(cursor)
         return Response(dicts)
 
