@@ -136,6 +136,12 @@ VALUES ("1", roomNumber, @booking_number, customerID);
 
 END$$
 
+CREATE DEFINER=`root`@`localhost` PROCEDURE `servicesget`(IN `hotel` VARCHAR(255))
+    NO SQL
+SELECT service.Description, service.Price
+FROM service
+WHERE service.Hotel_ID = hotel$$
+
 DELIMITER ;
 
 
