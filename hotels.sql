@@ -578,8 +578,7 @@ ALTER TABLE `credit_card`
 --
 ALTER TABLE `customer`
   ADD PRIMARY KEY (`Customer_ID`,`Username`),
-  ADD UNIQUE KEY `Username` (`Username`),
-  ADD UNIQUE KEY `Password` (`Password`);
+  ADD UNIQUE KEY `Username` (`Username`);
 
 --
 -- Indexes for table `django_admin_log`
