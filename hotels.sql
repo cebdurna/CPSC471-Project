@@ -95,6 +95,47 @@ DO SLEEP(0.2);
 insert into paid_with values(cc_no,LAST_INSERT_ID(),invoice_id);
 END$$
 
+CREATE DEFINER=`root`@`localhost` PROCEDURE `customerbookingpost` (IN `customerID` VARCHAR(255), IN `roomNumber` VARCHAR(255), IN `checkInDate` DATE, IN `checkOutDate` DATE, IN `ccNumber` VARCHAR(255), IN `ccName` VARCHAR(255), IN `ccExpiry` DATE, IN `cvv` INT, IN `ccAddress` VARCHAR(255), IN `ccPostal` VARCHAR(255))  NO SQL
+BEGIN
+
+SET @total = (
+	SELECT room.Rate
+	FROM room
+	WHERE room.Number = roomNumber
+);
+
+SET @tax = (@total * 0.05);
+
+INSERT IGNORE INTO credit_card
+VALUES (ccNumber, ccName, ccExpiry, cvv, ccAddress, ccPostal);
+
+# Might need to make invoice id column an integer for the MAX function
+# Jeff already set it to integer type in his local branch
+
+SET @invoice_id = (SELECT IFNULL(MAX(Invoice_ID) + 1, 1) FROM invoice);
+
+INSERT INTO invoice
+VALUES (@invoice_id, "Digital", CAST(NOW() as date), checkInDate);
+
+SET @charge_id = (SELECT IFNULL(MAX(Charge_ID) + 1, 1) FROM charge);
+
+INSERT INTO charge
+VALUES (@charge_id, @invoice_id, "Room(s) Charge", @tax, @total, NOW());
+
+# Now make booking\
+
+SET @booking_number = (SELECT IFNULL(MAX(Number) + 1, 1) FROM booking);
+
+INSERT INTO booking
+VALUES (@booking_number, customerID, checkOutDate, checkInDate, ccNumber, @invoice_id);
+
+# Now make booked_at
+
+INSERT INTO booked_at
+VALUES ("1", roomNumber, @booking_number, customerID);
+
+END$$
+
 DELIMITER ;
 
 
@@ -234,7 +275,7 @@ CREATE TABLE `booking` (
   `Check_Out_Date` date NOT NULL,
   `Check_In_Date` date NOT NULL,
   `CC_Number` varchar(255) NOT NULL,
-  `Invoice_ID` varchar(255) NOT NULL
+  `Invoice_ID` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
@@ -245,7 +286,7 @@ CREATE TABLE `booking` (
 
 CREATE TABLE `charge` (
   `Charge_ID` int(11) NOT NULL,
-  `Invoice_ID` varchar(255) NOT NULL,
+  `Invoice_ID` int(11) NOT NULL,
   `Description` varchar(255) NOT NULL,
   `Tax` float NOT NULL,
   `Price` float NOT NULL,
@@ -423,18 +464,11 @@ CREATE TABLE `hotel` (
 --
 
 CREATE TABLE `invoice` (
-  `Invoice_ID` varchar(255) NOT NULL,
+  `Invoice_ID` int(11) NOT NULL,
   `Format` varchar(255) NOT NULL,
   `Date_created` date NOT NULL,
   `Date_due` date NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
---
--- Dumping data for table `invoice`
---
-
-INSERT INTO `invoice` (`Invoice_ID`, `Format`, `Date_created`, `Date_due`) VALUES
-('abcdef', 'a', '0000-00-00', '0000-00-00');
 
 -- --------------------------------------------------------
 
@@ -445,7 +479,7 @@ INSERT INTO `invoice` (`Invoice_ID`, `Format`, `Date_created`, `Date_due`) VALUE
 CREATE TABLE `paid_with` (
   `CC_Number` varchar(255) NOT NULL,
   `Transaction_Number` int(11) NOT NULL,
-  `Invoice_ID` varchar(255) NOT NULL
+  `Invoice_ID` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
@@ -456,7 +490,7 @@ CREATE TABLE `paid_with` (
 
 CREATE TABLE `payment` (
   `Transaction_Number` int(11) NOT NULL,
-  `Invoice_ID` varchar(255) NOT NULL,
+  `Invoice_ID` int(11) NOT NULL,
   `Amount` float NOT NULL,
   `Date` date NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
