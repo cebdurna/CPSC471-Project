@@ -40,6 +40,14 @@ class Booking(APIView):
             dicts = dictfetchall(cursor)
             return Response(dicts)
         return Response()
+        
+    def post(self, request):
+        with connection.cursor() as cursor:
+            # might run into issues with roomNumbers being a list of strings
+            cursor.callproc('customerbookingpost', [request.query_params["customerID"], request.query_params["roomNumber"], request.query_params["checkInDate"], request.query_params["checkOutDate"], request.query_params["ccNumber"], request.query_params["ccName"], request.query_params["ccExpiry"], request.query_params["cvv"], request.query_params["ccAddress"], request.query_params["ccPostal"]])
+            dicts = dictfetchall(cursor)
+            return Response()
+        return Response()
 
 class Invoice_Detail(APIView):
     def get(self, request):
@@ -66,6 +74,14 @@ class Invoice(APIView):
 
             dicts = dictfetchall(cursor)
 
+            return Response(dicts)
+        return Response()
+        
+class Availability(APIView):
+    def get(self, request):
+        with connection.cursor() as cursor:
+            cursor.callproc('customeravailabilityget', [request.query_params["checkInDate"], request.query_params["checkOutDate"]])
+            dicts = dictfetchall(cursor)
             return Response(dicts)
         return Response()
 
