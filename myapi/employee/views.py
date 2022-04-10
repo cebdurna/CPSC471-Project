@@ -7,6 +7,43 @@ from django.db import connection
 
 # Create your views here.
 
+class Login(APIView):
+    def get(self, request):
+        with connection.cursor() as cursor:
+            cursor.callproc('employeeloginget', [request.query_params["username"], request.query_params["password"]])
+            dicts = dictfetchall(cursor)
+            return Response(dicts)
+        return Response()
+        
+class Rooms(APIView):
+    def get(self, request):
+        with connection.cursor() as cursor:
+            cursor.callproc('employeeroomsget', [request.query_params["hotel"]])
+            dicts = dictfetchall(cursor)
+            return Response(dicts)
+        return Response()
+        
+    def post(self, request):
+        with connection.cursor() as cursor:
+            cursor.callproc('employeeroomspost', [request.query_params["room_no"], request.query_params["hotelID"], request.query_params["type"], request.query_params["beds"], request.query_params["floor"], request.query_params["furniture"], request.query_params["capacity"], request.query_params["orientation"], request.query_params["rate"]])
+            dicts = dictfetchall(cursor)
+            return Response(dicts)
+        return Response()
+        
+    def put(self, request):
+        with connection.cursor() as cursor:
+            cursor.callproc('employeeroomsput', [request.query_params["room_no"], request.query_params["hotelID"], request.query_params["type"], request.query_params["beds"], request.query_params["floor"], request.query_params["furniture"], request.query_params["capacity"], request.query_params["orientation"], request.query_params["rate"]])
+            dicts = dictfetchall(cursor)
+            return Response(dicts)
+        return Response()
+        
+    def delete(self, request):
+        with connection.cursor() as cursor:
+            cursor.callproc('employeeroomsdelete', [request.query_params["hotelID"], request.query_params["roomNo"]])
+            dicts = dictfetchall(cursor)
+            return Response(dicts)
+        return Response()
+
 class Invoice_Detail(APIView):
 
     def get(self, request):
