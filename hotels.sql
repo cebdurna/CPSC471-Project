@@ -21,6 +21,9 @@ SET time_zone = "+00:00";
 --
 -- Database: `hotels`
 --
+CREATE DATABASE hotels;
+
+USE hotels;
 
 DELIMITER $$
 --
@@ -144,6 +147,7 @@ update service
 set service.Hotel_ID = hotel_id, service.Description = description, service.Price = price
 where service.Service_ID = service_id$$
 
+DELIMITER ;
 DELIMITER ;
 
 -- --------------------------------------------------------
@@ -359,7 +363,7 @@ CREATE TABLE `django_admin_log` (
   `change_message` longtext NOT NULL,
   `content_type_id` int(11) DEFAULT NULL,
   `user_id` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ;
 
 -- --------------------------------------------------------
 
@@ -611,20 +615,293 @@ ALTER TABLE `auth_user_groups`
   ADD KEY `auth_user_groups_group_id_97559544_fk_auth_group_id` (`group_id`);
 
 --
+-- Indexes for table `auth_user_user_permissions`
+--
+ALTER TABLE `auth_user_user_permissions`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `auth_user_user_permissions_user_id_permission_id_14a6b632_uniq` (`user_id`,`permission_id`),
+  ADD KEY `auth_user_user_permi_permission_id_1fbb5f2c_fk_auth_perm` (`permission_id`);
+
+--
+-- Indexes for table `booked_at`
+--
+ALTER TABLE `booked_at`
+  ADD PRIMARY KEY (`Hotel_ID`,`Room_Number`,`Booking_Number`,`Customer_ID`),
+  ADD KEY `Customer_ID` (`Customer_ID`),
+  ADD KEY `Booking_Number` (`Booking_Number`),
+  ADD KEY `Room_Number` (`Room_Number`),
+  ADD KEY `Hotel_ID` (`Hotel_ID`);
+
+--
 -- Indexes for table `booking`
 --
 ALTER TABLE `booking`
-  ADD PRIMARY KEY (`Number`,`Customer_ID`);
+  ADD PRIMARY KEY (`Number`,`Customer_ID`),
+  ADD KEY `Customer_ID` (`Customer_ID`),
+  ADD KEY `CC_Number` (`CC_Number`),
+  ADD KEY `Invoice_ID` (`Invoice_ID`);
+
+--
+-- Indexes for table `charge`
+--
+ALTER TABLE `charge`
+  ADD PRIMARY KEY (`Charge_ID`,`Invoice_ID`),
+  ADD KEY `Invoice_ID` (`Invoice_ID`);
+
+--
+-- Indexes for table `credit_card`
+--
+ALTER TABLE `credit_card`
+  ADD PRIMARY KEY (`CC_Number`);
+
+--
+-- Indexes for table `customer`
+--
+ALTER TABLE `customer`
+  ADD PRIMARY KEY (`Customer_ID`,`Username`),
+  ADD UNIQUE KEY `Username` (`Username`),
+  ADD UNIQUE KEY `Password` (`Password`);
+
+--
+-- Indexes for table `django_admin_log`
+--
+ALTER TABLE `django_admin_log`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `django_admin_log_content_type_id_c4bce8eb_fk_django_co` (`content_type_id`),
+  ADD KEY `django_admin_log_user_id_c564eba6_fk_auth_user_id` (`user_id`);
+
+--
+-- Indexes for table `django_content_type`
+--
+ALTER TABLE `django_content_type`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `django_content_type_app_label_model_76bd3d3b_uniq` (`app_label`,`model`);
+
+--
+-- Indexes for table `django_migrations`
+--
+ALTER TABLE `django_migrations`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `django_session`
+--
+ALTER TABLE `django_session`
+  ADD PRIMARY KEY (`session_key`),
+  ADD KEY `django_session_expire_date_a5c62663` (`expire_date`);
+
+--
+-- Indexes for table `employee`
+--
+ALTER TABLE `employee`
+  ADD PRIMARY KEY (`Employee_ID`,`Username`),
+  ADD UNIQUE KEY `Username` (`Username`),
+  ADD UNIQUE KEY `Password` (`Password`),
+  ADD KEY `Hotel_ID` (`Hotel_ID`);
+
+--
+-- Indexes for table `hotel`
+--
+ALTER TABLE `hotel`
+  ADD PRIMARY KEY (`ID`);
+
+--
+-- Indexes for table `invoice`
+--
+ALTER TABLE `invoice`
+  ADD PRIMARY KEY (`Invoice_ID`);
+
+--
+-- Indexes for table `paid_with`
+--
+ALTER TABLE `paid_with`
+  ADD PRIMARY KEY (`CC_Number`,`Transaction_Number`,`Invoice_ID`),
+  ADD KEY `Transaction_Number` (`Transaction_Number`),
+  ADD KEY `Invoice_ID` (`Invoice_ID`);
+
+--
+-- Indexes for table `payment`
+--
+ALTER TABLE `payment`
+  ADD PRIMARY KEY (`Transaction_Number`,`Invoice_ID`),
+  ADD KEY `Invoice_ID` (`Invoice_ID`);
+
+--
+-- Indexes for table `room`
+--
+ALTER TABLE `room`
+  ADD PRIMARY KEY (`Number`,`Hotel_ID`),
+  ADD KEY `Hotel_ID` (`Hotel_ID`);
+
+--
+-- Indexes for table `service`
+--
+ALTER TABLE `service`
+  ADD PRIMARY KEY (`Service_ID`),
+  ADD KEY `Hotel_ID` (`Hotel_ID`);
 
 --
 -- AUTO_INCREMENT for dumped tables
 --
 
 --
--- AUTO_INCREMENT for table `booking`
+-- AUTO_INCREMENT for table `auth_group`
+--
+ALTER TABLE `auth_group`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `auth_group_permissions`
+--
+ALTER TABLE `auth_group_permissions`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `auth_permission`
+--
+ALTER TABLE `auth_permission`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
+
+--
+-- AUTO_INCREMENT for table `auth_user`
+--
+ALTER TABLE `auth_user`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `auth_user_groups`
+--
+ALTER TABLE `auth_user_groups`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `auth_user_user_permissions`
+--
+ALTER TABLE `auth_user_user_permissions`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `charge`
+--
+ALTER TABLE `charge`
+  MODIFY `Charge_ID` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `django_admin_log`
+--
+ALTER TABLE `django_admin_log`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `django_content_type`
+--
+ALTER TABLE `django_content_type`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+
+--
+-- AUTO_INCREMENT for table `django_migrations`
+--
+ALTER TABLE `django_migrations`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+
+--
+-- AUTO_INCREMENT for table `payment`
+--
+ALTER TABLE `payment`
+  MODIFY `Transaction_Number` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+
+--
+-- Constraints for dumped tables
+--
+
+--
+-- Constraints for table `auth_group_permissions`
+--
+ALTER TABLE `auth_group_permissions`
+  ADD CONSTRAINT `auth_group_permissio_permission_id_84c5c92e_fk_auth_perm` FOREIGN KEY (`permission_id`) REFERENCES `auth_permission` (`id`),
+  ADD CONSTRAINT `auth_group_permissions_group_id_b120cbf9_fk_auth_group_id` FOREIGN KEY (`group_id`) REFERENCES `auth_group` (`id`);
+
+--
+-- Constraints for table `auth_permission`
+--
+ALTER TABLE `auth_permission`
+  ADD CONSTRAINT `auth_permission_content_type_id_2f476e4b_fk_django_co` FOREIGN KEY (`content_type_id`) REFERENCES `django_content_type` (`id`);
+
+--
+-- Constraints for table `auth_user_groups`
+--
+ALTER TABLE `auth_user_groups`
+  ADD CONSTRAINT `auth_user_groups_group_id_97559544_fk_auth_group_id` FOREIGN KEY (`group_id`) REFERENCES `auth_group` (`id`),
+  ADD CONSTRAINT `auth_user_groups_user_id_6a12ed8b_fk_auth_user_id` FOREIGN KEY (`user_id`) REFERENCES `auth_user` (`id`);
+
+--
+-- Constraints for table `auth_user_user_permissions`
+--
+ALTER TABLE `auth_user_user_permissions`
+  ADD CONSTRAINT `auth_user_user_permi_permission_id_1fbb5f2c_fk_auth_perm` FOREIGN KEY (`permission_id`) REFERENCES `auth_permission` (`id`),
+  ADD CONSTRAINT `auth_user_user_permissions_user_id_a95ead1b_fk_auth_user_id` FOREIGN KEY (`user_id`) REFERENCES `auth_user` (`id`);
+
+--
+-- Constraints for table `booked_at`
+--
+ALTER TABLE `booked_at`
+  ADD CONSTRAINT `booked_at_ibfk_2` FOREIGN KEY (`Customer_ID`) REFERENCES `customer` (`Customer_ID`) ON DELETE RESTRICT ON UPDATE RESTRICT,
+  ADD CONSTRAINT `booked_at_ibfk_3` FOREIGN KEY (`Booking_Number`) REFERENCES `booking` (`Number`) ON DELETE RESTRICT ON UPDATE RESTRICT,
+  ADD CONSTRAINT `booked_at_ibfk_4` FOREIGN KEY (`Room_Number`) REFERENCES `room` (`Number`) ON DELETE RESTRICT ON UPDATE RESTRICT,
+  ADD CONSTRAINT `booked_at_ibfk_5` FOREIGN KEY (`Hotel_ID`) REFERENCES `hotel` (`ID`) ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+--
+-- Constraints for table `booking`
 --
 ALTER TABLE `booking`
-  MODIFY `Number` int(11) NOT NULL AUTO_INCREMENT;
+  ADD CONSTRAINT `booking_ibfk_1` FOREIGN KEY (`Customer_ID`) REFERENCES `customer` (`Customer_ID`) ON DELETE RESTRICT ON UPDATE RESTRICT,
+  ADD CONSTRAINT `booking_ibfk_2` FOREIGN KEY (`CC_Number`) REFERENCES `credit_card` (`CC_Number`) ON DELETE RESTRICT ON UPDATE RESTRICT,
+  ADD CONSTRAINT `booking_ibfk_3` FOREIGN KEY (`Invoice_ID`) REFERENCES `invoice` (`Invoice_ID`) ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+--
+-- Constraints for table `charge`
+--
+ALTER TABLE `charge`
+  ADD CONSTRAINT `charge_ibfk_1` FOREIGN KEY (`Invoice_ID`) REFERENCES `invoice` (`Invoice_ID`) ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+--
+-- Constraints for table `django_admin_log`
+--
+ALTER TABLE `django_admin_log`
+  ADD CONSTRAINT `django_admin_log_content_type_id_c4bce8eb_fk_django_co` FOREIGN KEY (`content_type_id`) REFERENCES `django_content_type` (`id`),
+  ADD CONSTRAINT `django_admin_log_user_id_c564eba6_fk_auth_user_id` FOREIGN KEY (`user_id`) REFERENCES `auth_user` (`id`);
+
+--
+-- Constraints for table `employee`
+--
+ALTER TABLE `employee`
+  ADD CONSTRAINT `employee_ibfk_1` FOREIGN KEY (`Hotel_ID`) REFERENCES `hotel` (`ID`) ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+--
+-- Constraints for table `paid_with`
+--
+ALTER TABLE `paid_with`
+  ADD CONSTRAINT `paid_with_ibfk_1` FOREIGN KEY (`CC_Number`) REFERENCES `credit_card` (`CC_Number`) ON DELETE RESTRICT ON UPDATE RESTRICT,
+  ADD CONSTRAINT `paid_with_ibfk_2` FOREIGN KEY (`Transaction_Number`) REFERENCES `payment` (`Transaction_Number`) ON DELETE RESTRICT ON UPDATE RESTRICT,
+  ADD CONSTRAINT `paid_with_ibfk_3` FOREIGN KEY (`Invoice_ID`) REFERENCES `invoice` (`Invoice_ID`) ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+--
+-- Constraints for table `payment`
+--
+ALTER TABLE `payment`
+  ADD CONSTRAINT `payment_ibfk_1` FOREIGN KEY (`Invoice_ID`) REFERENCES `invoice` (`Invoice_ID`) ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+--
+-- Constraints for table `room`
+--
+ALTER TABLE `room`
+  ADD CONSTRAINT `room_ibfk_1` FOREIGN KEY (`Hotel_ID`) REFERENCES `hotel` (`ID`) ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+--
+-- Constraints for table `service`
+--
+ALTER TABLE `service`
+  ADD CONSTRAINT `service_ibfk_1` FOREIGN KEY (`Hotel_ID`) REFERENCES `hotel` (`ID`) ON DELETE RESTRICT ON UPDATE RESTRICT;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
