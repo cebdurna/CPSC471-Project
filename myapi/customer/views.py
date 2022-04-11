@@ -18,6 +18,8 @@ class Booking(APIView):
 
 
 class Registration(APIView):
+    def get(self, request):
+        with connection.cursor() as cursor:
             cursor.callproc('customerlogin')
             dicts = dictfetchall(cursor)
         return Response(dicts)
