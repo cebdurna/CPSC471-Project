@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Apr 07, 2022 at 11:29 PM
+-- Generation Time: Apr 11, 2022 at 01:32 AM
 -- Server version: 8.0.17
 -- PHP Version: 7.3.10
 
@@ -22,14 +22,57 @@ SET time_zone = "+00:00";
 -- Database: `hotels`
 --
 
-CREATE DATABASE hotels;
-
-USE hotels;
-
 DELIMITER $$
 --
 -- Procedures
 --
+CREATE DEFINER=`root`@`localhost` PROCEDURE `bookings_delete` (IN `book_no` INT, IN `customer_id` VARCHAR(255), IN `hotel_id` VARCHAR(255), IN `room_no` INT)  MODIFIES SQL DATA
+BEGIN
+
+delete from booked_at
+where booked_at.Hotel_ID = hotel_id and booked_at.Room_Number = room_no and  booked_at.Booking_Number = book_no and booked_at.Customer_ID = customer_id;
+
+delete from booking
+where booking.Number = book_no and booking.Customer_ID = customer_id;
+
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `bookings_get` ()  READS SQL DATA
+select * from booking$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `customerbookingget` (IN `customerID` VARCHAR(255))  NO SQL
+SELECT booking.Number, booked_at.Room_Number, booking.Check_In_Date, booking.Check_Out_Date, booking.CC_Number, booking.Invoice_ID, Sum(charge.Tax + charge.Price)
+
+FROM (((booking JOIN booked_at ON booking.Number=booked_at.Booking_Number AND booking.Customer_ID=booked_at.Customer_ID)
+     	JOIN room ON room.Number=booked_at.Room_Number AND room.Hotel_ID=booked_at.Hotel_ID)
+        		JOIN charge ON charge.Invoice_ID=booking.Invoice_ID)
+
+WHERE booking.Customer_ID=customerID
+
+GROUP BY Invoice_ID$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `customerinvoicedetailcharges` (IN `invoiceID` VARCHAR(255))  NO SQL
+SELECT charge.Description, charge.Price, charge.Tax, charge.ChargeTime
+FROM charge
+WHERE charge.Invoice_ID=invoiceID$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `customerinvoicedetailpayments` (IN `invoiceID` VARCHAR(255))  NO SQL
+SELECT payment.Transaction_Number, paid_with.CC_Number, payment.Amount, payment.Date
+FROM (payment JOIN paid_with ON payment.Transaction_Number=paid_with.Transaction_Number AND payment.Invoice_ID=paid_with.Invoice_ID)
+WHERE paid_with.Invoice_ID=invoiceID$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `customerinvoiceget` (IN `customerID` VARCHAR(255))  NO SQL
+SELECT invoice.Invoice_ID, invoice.Format, invoice.Date_created, invoice.Date_due, booking.Number as booking_no, SUM(charge.Price + charge.Tax) as total, payments.TotalAmount as total_paid
+FROM (((invoice JOIN booking ON invoice.Invoice_ID=booking.Invoice_ID)
+      JOIN charge ON invoice.Invoice_ID=charge.Invoice_ID)
+      		JOIN (
+                SELECT payment.Invoice_ID, SUM(payment.Amount) as TotalAmount
+                FROM payment
+                GROUP BY payment.Invoice_ID) payments ON invoice.Invoice_ID=payments.Invoice_ID)
+WHERE booking.Customer_ID=customerID
+
+GROUP BY Invoice_ID$$
+
 CREATE DEFINER=`root`@`localhost` PROCEDURE `customerloginget` (IN `username` VARCHAR(255), IN `password` VARCHAR(255))  NO SQL
 SELECT Customer_ID
 FROM customer
@@ -45,6 +88,10 @@ from customer
 where customer.password = password and customer.username = username;
 END$$
 
+CREATE DEFINER=`root`@`localhost` PROCEDURE `employee_invoice_detail_charge` (IN `invoice_id` VARCHAR(255), IN `description` VARCHAR(255), IN `tax` FLOAT, IN `price` FLOAT, IN `charge_time` DATETIME)  MODIFIES SQL DATA
+insert into charge(Invoice_ID, Description, Tax, Price, ChargeTime)
+values(invoice_id, description, tax, price, charge_time)$$
+
 CREATE DEFINER=`root`@`localhost` PROCEDURE `employee_invoice_detail_payment` (IN `invoice_id` VARCHAR(255), IN `cc_no` VARCHAR(255), IN `amount` FLOAT, IN `date` DATE)  MODIFIES SQL DATA
 BEGIN
 insert into payment(Invoice_ID, Amount, Date) values(invoice_id, amount, date);
@@ -52,58 +99,50 @@ DO SLEEP(0.2);
 insert into paid_with values(cc_no,LAST_INSERT_ID(),invoice_id);
 END$$
 
-DELIMITER $$
-CREATE DEFINER=`root`@`localhost` PROCEDURE `customerbookingget`(IN `customerID` VARCHAR(255))
-    NO SQL
-SELECT booking.Number, booked_at.Room_Number, booking.Check_In_Date, booking.Check_Out_Date, booking.CC_Number, booking.Invoice_ID, Sum(charge.Tax + charge.Price)
+CREATE DEFINER=`root`@`localhost` PROCEDURE `invoice_detail_get` (IN `invoice_id` VARCHAR(255))  READS SQL DATA
+BEGIN
+select * 
+from invoice
+where invoice.Invoice_ID = invoice_id;
 
-FROM (((booking JOIN booked_at ON booking.Number=booked_at.Booking_Number AND booking.Customer_ID=booked_at.Customer_ID)
-     	JOIN room ON room.Number=booked_at.Room_Number AND room.Hotel_ID=booked_at.Hotel_ID)
-        		JOIN charge ON charge.Invoice_ID=booking.Invoice_ID)
+select * 
+from charge
+where charge.Invoice_ID = invoice_id;
 
-WHERE booking.Customer_ID=customerID
+select * 
+from payment
+where payment.Invoice_ID = invoice_id;
+END$$
 
-GROUP BY Invoice_ID$$
-DELIMITER ;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `invoice_detail_update` (IN `invoice_id` VARCHAR(255), IN `form` VARCHAR(255), IN `date_created` DATE, IN `date_due` DATE)  MODIFIES SQL DATA
+update invoice
+set invoice.Format = form, invoice.Date_created=date_created, invoice.Date_due=date_due
+where invoice.Invoice_ID=invoice_id$$
 
-DELIMITER $$
-CREATE DEFINER=`root`@`localhost` PROCEDURE `customerinvoicedetailcharges`(IN `invoiceID` VARCHAR(255))
-    NO SQL
-SELECT charge.Description, charge.Price, charge.Tax, charge.ChargeTime
-FROM charge
-WHERE charge.Invoice_ID=invoiceID$$
-DELIMITER ;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `invoice_getall` ()  READS SQL DATA
+select * 
+from invoice$$
 
-DELIMITER $$
-CREATE DEFINER=`root`@`localhost` PROCEDURE `customerinvoiceget`(IN `customerID` VARCHAR(255))
-    NO SQL
-SELECT invoice.Invoice_ID, invoice.Format, invoice.Date_created, invoice.Date_due, booking.Number as booking_no, SUM(charge.Price + charge.Tax) as total, payments.TotalAmount as total_paid
-FROM (((invoice JOIN booking ON invoice.Invoice_ID=booking.Invoice_ID)
-      JOIN charge ON invoice.Invoice_ID=charge.Invoice_ID)
-      		JOIN (
-                SELECT payment.Invoice_ID, SUM(payment.Amount) as TotalAmount
-                FROM payment
-                GROUP BY payment.Invoice_ID) payments ON invoice.Invoice_ID=payments.Invoice_ID)
-WHERE booking.Customer_ID=customerID
+CREATE DEFINER=`root`@`localhost` PROCEDURE `invoice_post` (IN `invoice_id` VARCHAR(255), IN `form` VARCHAR(255), IN `date_created` DATE, IN `date_due` DATE)  MODIFIES SQL DATA
+insert into invoice
+values(invoice_id, form, date_created, date_due)$$
 
-GROUP BY Invoice_ID$$
-DELIMITER ;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `services_delete` (IN `service_id` VARCHAR(255))  MODIFIES SQL DATA
+delete FROM service
+where service.Service_ID = service_id$$
 
-DELIMITER $$
-CREATE DEFINER=`root`@`localhost` PROCEDURE `customerloginget`(IN `username` VARCHAR(255), IN `password` VARCHAR(255))
-    NO SQL
-SELECT Customer_ID
-FROM customer
-WHERE customer.Username = username AND customer.Password = password$$
-DELIMITER ;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `services_get` ()  READS SQL DATA
+select * 
+from service$$
 
-DELIMITER $$
-CREATE DEFINER=`root`@`localhost` PROCEDURE `customerinvoicedetailpayments`(IN `invoiceID` VARCHAR(255))
-    NO SQL
-SELECT payment.Transaction_Number, paid_with.CC_Number, payment.Amount, payment.Date
-FROM (payment JOIN paid_with ON payment.Transaction_Number=paid_with.Transaction_Number AND payment.Invoice_ID=paid_with.Invoice_ID)
-WHERE paid_with.Invoice_ID=invoiceID$$
-DELIMITER ;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `services_post` (IN `service_id` VARCHAR(255), IN `hotel_id` VARCHAR(255), IN `description` VARCHAR(255), IN `price` FLOAT)  MODIFIES SQL DATA
+insert into service
+values(service_id, hotel_id, description, price)$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `services_update` (IN `service_id` VARCHAR(255), IN `hotel_id` VARCHAR(255), IN `description` VARCHAR(255), IN `price` FLOAT)  MODIFIES SQL DATA
+update service
+set service.Hotel_ID = hotel_id, service.Description = description, service.Price = price
+where service.Service_ID = service_id$$
 
 DELIMITER ;
 
@@ -320,7 +359,7 @@ CREATE TABLE `django_admin_log` (
   `change_message` longtext NOT NULL,
   `content_type_id` int(11) DEFAULT NULL,
   `user_id` int(11) NOT NULL
-) ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
 
@@ -424,6 +463,13 @@ CREATE TABLE `hotel` (
   `Name` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
+--
+-- Dumping data for table `hotel`
+--
+
+INSERT INTO `hotel` (`ID`, `Address`, `Name`) VALUES
+('a1b2c3', '2500 University Dr NW Calgary AB T2N 1N4', 'Our Wonderful Hotel');
+
 -- --------------------------------------------------------
 
 --
@@ -442,7 +488,8 @@ CREATE TABLE `invoice` (
 --
 
 INSERT INTO `invoice` (`Invoice_ID`, `Format`, `Date_created`, `Date_due`) VALUES
-('abcdef', 'a', '0000-00-00', '0000-00-00');
+('abcdef', 'printout', '2022-01-01', '2023-01-02'),
+('qwerty', 'printout', '0000-00-00', '0000-00-00');
 
 -- --------------------------------------------------------
 
@@ -456,6 +503,13 @@ CREATE TABLE `paid_with` (
   `Invoice_ID` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
+--
+-- Dumping data for table `paid_with`
+--
+
+INSERT INTO `paid_with` (`CC_Number`, `Transaction_Number`, `Invoice_ID`) VALUES
+('123456789', 0, 'abcdef');
+
 -- --------------------------------------------------------
 
 --
@@ -468,6 +522,13 @@ CREATE TABLE `payment` (
   `Amount` float NOT NULL,
   `Date` date NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Dumping data for table `payment`
+--
+
+INSERT INTO `payment` (`Transaction_Number`, `Invoice_ID`, `Amount`, `Date`) VALUES
+(0, 'abcdef', 0.01, '2022-01-01');
 
 -- --------------------------------------------------------
 
@@ -499,6 +560,14 @@ CREATE TABLE `service` (
   `Description` varchar(255) NOT NULL,
   `Price` float NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Dumping data for table `service`
+--
+
+INSERT INTO `service` (`Service_ID`, `Hotel_ID`, `Description`, `Price`) VALUES
+('hello', 'a1b2c3', 'Shuttle', 2.5),
+('myservices', 'a1b2c3', 'Massage', 34.5);
 
 --
 -- Indexes for dumped tables
@@ -542,293 +611,20 @@ ALTER TABLE `auth_user_groups`
   ADD KEY `auth_user_groups_group_id_97559544_fk_auth_group_id` (`group_id`);
 
 --
--- Indexes for table `auth_user_user_permissions`
---
-ALTER TABLE `auth_user_user_permissions`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `auth_user_user_permissions_user_id_permission_id_14a6b632_uniq` (`user_id`,`permission_id`),
-  ADD KEY `auth_user_user_permi_permission_id_1fbb5f2c_fk_auth_perm` (`permission_id`);
-
---
--- Indexes for table `booked_at`
---
-ALTER TABLE `booked_at`
-  ADD PRIMARY KEY (`Hotel_ID`,`Room_Number`,`Booking_Number`,`Customer_ID`),
-  ADD KEY `Customer_ID` (`Customer_ID`),
-  ADD KEY `Booking_Number` (`Booking_Number`),
-  ADD KEY `Room_Number` (`Room_Number`),
-  ADD KEY `Hotel_ID` (`Hotel_ID`);
-
---
 -- Indexes for table `booking`
 --
 ALTER TABLE `booking`
-  ADD PRIMARY KEY (`Number`,`Customer_ID`),
-  ADD KEY `Customer_ID` (`Customer_ID`),
-  ADD KEY `CC_Number` (`CC_Number`),
-  ADD KEY `Invoice_ID` (`Invoice_ID`);
-
---
--- Indexes for table `charge`
---
-ALTER TABLE `charge`
-  ADD PRIMARY KEY (`Charge_ID`,`Invoice_ID`),
-  ADD KEY `Invoice_ID` (`Invoice_ID`);
-
---
--- Indexes for table `credit_card`
---
-ALTER TABLE `credit_card`
-  ADD PRIMARY KEY (`CC_Number`);
-
---
--- Indexes for table `customer`
---
-ALTER TABLE `customer`
-  ADD PRIMARY KEY (`Customer_ID`,`Username`),
-  ADD UNIQUE KEY `Username` (`Username`),
-  ADD UNIQUE KEY `Password` (`Password`);
-
---
--- Indexes for table `django_admin_log`
---
-ALTER TABLE `django_admin_log`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `django_admin_log_content_type_id_c4bce8eb_fk_django_co` (`content_type_id`),
-  ADD KEY `django_admin_log_user_id_c564eba6_fk_auth_user_id` (`user_id`);
-
---
--- Indexes for table `django_content_type`
---
-ALTER TABLE `django_content_type`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `django_content_type_app_label_model_76bd3d3b_uniq` (`app_label`,`model`);
-
---
--- Indexes for table `django_migrations`
---
-ALTER TABLE `django_migrations`
-  ADD PRIMARY KEY (`id`);
-
---
--- Indexes for table `django_session`
---
-ALTER TABLE `django_session`
-  ADD PRIMARY KEY (`session_key`),
-  ADD KEY `django_session_expire_date_a5c62663` (`expire_date`);
-
---
--- Indexes for table `employee`
---
-ALTER TABLE `employee`
-  ADD PRIMARY KEY (`Employee_ID`,`Username`),
-  ADD UNIQUE KEY `Username` (`Username`),
-  ADD UNIQUE KEY `Password` (`Password`),
-  ADD KEY `Hotel_ID` (`Hotel_ID`);
-
---
--- Indexes for table `hotel`
---
-ALTER TABLE `hotel`
-  ADD PRIMARY KEY (`ID`);
-
---
--- Indexes for table `invoice`
---
-ALTER TABLE `invoice`
-  ADD PRIMARY KEY (`Invoice_ID`);
-
---
--- Indexes for table `paid_with`
---
-ALTER TABLE `paid_with`
-  ADD PRIMARY KEY (`CC_Number`,`Transaction_Number`,`Invoice_ID`),
-  ADD KEY `Transaction_Number` (`Transaction_Number`),
-  ADD KEY `Invoice_ID` (`Invoice_ID`);
-
---
--- Indexes for table `payment`
---
-ALTER TABLE `payment`
-  ADD PRIMARY KEY (`Transaction_Number`,`Invoice_ID`),
-  ADD KEY `Invoice_ID` (`Invoice_ID`);
-
---
--- Indexes for table `room`
---
-ALTER TABLE `room`
-  ADD PRIMARY KEY (`Number`,`Hotel_ID`),
-  ADD KEY `Hotel_ID` (`Hotel_ID`);
-
---
--- Indexes for table `service`
---
-ALTER TABLE `service`
-  ADD PRIMARY KEY (`Service_ID`),
-  ADD KEY `Hotel_ID` (`Hotel_ID`);
+  ADD PRIMARY KEY (`Number`,`Customer_ID`);
 
 --
 -- AUTO_INCREMENT for dumped tables
 --
 
 --
--- AUTO_INCREMENT for table `auth_group`
---
-ALTER TABLE `auth_group`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT for table `auth_group_permissions`
---
-ALTER TABLE `auth_group_permissions`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT for table `auth_permission`
---
-ALTER TABLE `auth_permission`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
-
---
--- AUTO_INCREMENT for table `auth_user`
---
-ALTER TABLE `auth_user`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT for table `auth_user_groups`
---
-ALTER TABLE `auth_user_groups`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT for table `auth_user_user_permissions`
---
-ALTER TABLE `auth_user_user_permissions`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT for table `charge`
---
-ALTER TABLE `charge`
-  MODIFY `Charge_ID` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT for table `django_admin_log`
---
-ALTER TABLE `django_admin_log`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT for table `django_content_type`
---
-ALTER TABLE `django_content_type`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
-
---
--- AUTO_INCREMENT for table `django_migrations`
---
-ALTER TABLE `django_migrations`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
-
---
--- AUTO_INCREMENT for table `payment`
---
-ALTER TABLE `payment`
-  MODIFY `Transaction_Number` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
-
---
--- Constraints for dumped tables
---
-
---
--- Constraints for table `auth_group_permissions`
---
-ALTER TABLE `auth_group_permissions`
-  ADD CONSTRAINT `auth_group_permissio_permission_id_84c5c92e_fk_auth_perm` FOREIGN KEY (`permission_id`) REFERENCES `auth_permission` (`id`),
-  ADD CONSTRAINT `auth_group_permissions_group_id_b120cbf9_fk_auth_group_id` FOREIGN KEY (`group_id`) REFERENCES `auth_group` (`id`);
-
---
--- Constraints for table `auth_permission`
---
-ALTER TABLE `auth_permission`
-  ADD CONSTRAINT `auth_permission_content_type_id_2f476e4b_fk_django_co` FOREIGN KEY (`content_type_id`) REFERENCES `django_content_type` (`id`);
-
---
--- Constraints for table `auth_user_groups`
---
-ALTER TABLE `auth_user_groups`
-  ADD CONSTRAINT `auth_user_groups_group_id_97559544_fk_auth_group_id` FOREIGN KEY (`group_id`) REFERENCES `auth_group` (`id`),
-  ADD CONSTRAINT `auth_user_groups_user_id_6a12ed8b_fk_auth_user_id` FOREIGN KEY (`user_id`) REFERENCES `auth_user` (`id`);
-
---
--- Constraints for table `auth_user_user_permissions`
---
-ALTER TABLE `auth_user_user_permissions`
-  ADD CONSTRAINT `auth_user_user_permi_permission_id_1fbb5f2c_fk_auth_perm` FOREIGN KEY (`permission_id`) REFERENCES `auth_permission` (`id`),
-  ADD CONSTRAINT `auth_user_user_permissions_user_id_a95ead1b_fk_auth_user_id` FOREIGN KEY (`user_id`) REFERENCES `auth_user` (`id`);
-
---
--- Constraints for table `booked_at`
---
-ALTER TABLE `booked_at`
-  ADD CONSTRAINT `booked_at_ibfk_2` FOREIGN KEY (`Customer_ID`) REFERENCES `customer` (`Customer_ID`) ON DELETE RESTRICT ON UPDATE RESTRICT,
-  ADD CONSTRAINT `booked_at_ibfk_3` FOREIGN KEY (`Booking_Number`) REFERENCES `booking` (`Number`) ON DELETE RESTRICT ON UPDATE RESTRICT,
-  ADD CONSTRAINT `booked_at_ibfk_4` FOREIGN KEY (`Room_Number`) REFERENCES `room` (`Number`) ON DELETE RESTRICT ON UPDATE RESTRICT,
-  ADD CONSTRAINT `booked_at_ibfk_5` FOREIGN KEY (`Hotel_ID`) REFERENCES `hotel` (`ID`) ON DELETE RESTRICT ON UPDATE RESTRICT;
-
---
--- Constraints for table `booking`
+-- AUTO_INCREMENT for table `booking`
 --
 ALTER TABLE `booking`
-  ADD CONSTRAINT `booking_ibfk_1` FOREIGN KEY (`Customer_ID`) REFERENCES `customer` (`Customer_ID`) ON DELETE RESTRICT ON UPDATE RESTRICT,
-  ADD CONSTRAINT `booking_ibfk_2` FOREIGN KEY (`CC_Number`) REFERENCES `credit_card` (`CC_Number`) ON DELETE RESTRICT ON UPDATE RESTRICT,
-  ADD CONSTRAINT `booking_ibfk_3` FOREIGN KEY (`Invoice_ID`) REFERENCES `invoice` (`Invoice_ID`) ON DELETE RESTRICT ON UPDATE RESTRICT;
-
---
--- Constraints for table `charge`
---
-ALTER TABLE `charge`
-  ADD CONSTRAINT `charge_ibfk_1` FOREIGN KEY (`Invoice_ID`) REFERENCES `invoice` (`Invoice_ID`) ON DELETE RESTRICT ON UPDATE RESTRICT;
-
---
--- Constraints for table `django_admin_log`
---
-ALTER TABLE `django_admin_log`
-  ADD CONSTRAINT `django_admin_log_content_type_id_c4bce8eb_fk_django_co` FOREIGN KEY (`content_type_id`) REFERENCES `django_content_type` (`id`),
-  ADD CONSTRAINT `django_admin_log_user_id_c564eba6_fk_auth_user_id` FOREIGN KEY (`user_id`) REFERENCES `auth_user` (`id`);
-
---
--- Constraints for table `employee`
---
-ALTER TABLE `employee`
-  ADD CONSTRAINT `employee_ibfk_1` FOREIGN KEY (`Hotel_ID`) REFERENCES `hotel` (`ID`) ON DELETE RESTRICT ON UPDATE RESTRICT;
-
---
--- Constraints for table `paid_with`
---
-ALTER TABLE `paid_with`
-  ADD CONSTRAINT `paid_with_ibfk_1` FOREIGN KEY (`CC_Number`) REFERENCES `credit_card` (`CC_Number`) ON DELETE RESTRICT ON UPDATE RESTRICT,
-  ADD CONSTRAINT `paid_with_ibfk_2` FOREIGN KEY (`Transaction_Number`) REFERENCES `payment` (`Transaction_Number`) ON DELETE RESTRICT ON UPDATE RESTRICT,
-  ADD CONSTRAINT `paid_with_ibfk_3` FOREIGN KEY (`Invoice_ID`) REFERENCES `invoice` (`Invoice_ID`) ON DELETE RESTRICT ON UPDATE RESTRICT;
-
---
--- Constraints for table `payment`
---
-ALTER TABLE `payment`
-  ADD CONSTRAINT `payment_ibfk_1` FOREIGN KEY (`Invoice_ID`) REFERENCES `invoice` (`Invoice_ID`) ON DELETE RESTRICT ON UPDATE RESTRICT;
-
---
--- Constraints for table `room`
---
-ALTER TABLE `room`
-  ADD CONSTRAINT `room_ibfk_1` FOREIGN KEY (`Hotel_ID`) REFERENCES `hotel` (`ID`) ON DELETE RESTRICT ON UPDATE RESTRICT;
-
---
--- Constraints for table `service`
---
-ALTER TABLE `service`
-  ADD CONSTRAINT `service_ibfk_1` FOREIGN KEY (`Hotel_ID`) REFERENCES `hotel` (`ID`) ON DELETE RESTRICT ON UPDATE RESTRICT;
+  MODIFY `Number` int(11) NOT NULL AUTO_INCREMENT;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
