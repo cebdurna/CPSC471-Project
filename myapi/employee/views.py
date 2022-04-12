@@ -69,7 +69,6 @@ class Bookings(APIView):
 class Invoice_Detail(APIView):
 
     def get(self, request):
-        #if request.query_params["jwt"]
         with connection.cursor() as cursor:
             cursor.callproc('')
             dicts = dictfetchall(cursor)
@@ -77,9 +76,7 @@ class Invoice_Detail(APIView):
 
 
 class Charge(APIView):
-
     def post(self, request):
-        #if request.query_params["jwt"]
         with connection.cursor() as cursor:
             cursor.callproc('employee_invoice_detail_charge', [request.query_params["invoice_id"], request.query_params["description"], request.query_params["tax"], request.query_params["price"],request.query_params["charge_time"]])
             dicts = dictfetchall(cursor)
@@ -88,7 +85,6 @@ class Charge(APIView):
 
 class Payment(APIView):
     def post(self, request):
-        #if request.query_params["jwt"]
         with connection.cursor() as cursor:
             cursor.callproc('employee_invoice_detail_payment', [request.query_params["invoice_id"], request.query_params["cc_no"], request.query_params["amount"], request.query_params["date"]])
             dicts = dictfetchall(cursor)
