@@ -290,13 +290,6 @@ where invoice.Invoice_ID=invoice_id$$
 DELIMITER ;
 
 DELIMITER $$
-CREATE DEFINER=`root`@`localhost` PROCEDURE `invoice_post`(IN `form` VARCHAR(255), IN `date_created` DATE, IN `date_due` DATE)
-    MODIFIES SQL DATA
-insert into invoice (invoice.Format, invoice.Date_created, invoice.Date_due)
-values(form, date_created, date_due)$$
-DELIMITER ;
-
-DELIMITER $$
 CREATE DEFINER=`root`@`localhost` PROCEDURE `services_delete`(IN `service_id` INT)
     MODIFIES SQL DATA
 delete FROM service
@@ -326,20 +319,20 @@ where service.Service_ID = service_id$$
 DELIMITER ;
 
 DELIMITER $$
-CREATE DEFINER=`root`@`localhost` PROCEDURE `bookings_delete`(IN `book_no` INT, IN `customer_id` INT, IN `hotel_id` INT, IN `room_no` INT)
+CREATE DEFINER=`root`@`localhost` PROCEDURE `bookings_delete`(IN `book_no` INT, IN `hotel_id` INT)
     MODIFIES SQL DATA
 BEGIN
 
 delete from booked_at
-where booked_at.Hotel_ID = hotel_id and booked_at.Room_Number = room_no and  booked_at.Booking_Number = book_no and booked_at.Customer_ID = customer_id;
+where booked_at.Hotel_ID = hotel_id and  booked_at.Booking_Number = book_no;
 
 set @invoice_id = (
     select booking.Invoice_ID 
     from booking 
-    where booking.Number= book_no AND booking.Customer_ID = customer_id);
+    where booking.Number= book_no);
 
 delete from booking
-where booking.Number = book_no and booking.Customer_ID = customer_id;
+where booking.Number = book_no;
 
 delete from paid_with
 where paid_with.Invoice_ID = @invoice_id;

@@ -14,12 +14,6 @@ class Invoice(APIView):
             dicts = dictfetchall(cursor)
             return Response(dicts)
         return Response()
-    def post(self, request):
-        with connection.cursor() as cursor:
-            cursor.callproc('invoice_post', [request.query_params["form"], request.query_params["date_created"], request.query_params["date_due"]])
-            dicts = dictfetchall(cursor)
-            return Response(dicts)
-        return Response()
 
 class Login(APIView):
     def get(self, request):
@@ -82,7 +76,7 @@ class Bookings(APIView):
       
     def delete(self, request):
         with connection.cursor() as cursor:
-            cursor.callproc('bookings_delete',[request.query_params["book_no"],request.query_params["customer_id"], request.query_params["hotel_id"], request.query_params["room_no"] ] )
+            cursor.callproc('bookings_delete',[request.query_params["book_no"],request.query_params["hotel_id"]] )
             dicts = dictfetchall(cursor)
             return Response(dicts)
         return Response()
