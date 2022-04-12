@@ -90,12 +90,21 @@ class Invoice_Detail(APIView):
             return Response(dicts)
         return Response()
 
-class Invoice_Detail(APIView):
     def get(self, request):
         with connection.cursor() as cursor:
-            cursor.callproc('invoice_detail_get', [request.query_params["invoice_id"]])
-            dicts = dictfetchall(cursor)
-            return Response(dicts)
+            cursor.callproc('invoice_detail_get_charges', [request.query_params["invoice_id"]])
+
+            charges = dictfetchall(cursor)
+
+            cursor.close()
+
+            cursor = connection.cursor()
+
+            cursor.callproc('invoice_detail_get_payment', [request.query_params["invoice_id"]])
+
+            payments = dictfetchall(cursor)
+            finaldict = {"Charges": charges, "Payments":payments}
+            return Response(finaldict)
         return Response()
 
     def put(self, request):
