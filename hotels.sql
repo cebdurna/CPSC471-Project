@@ -263,10 +263,10 @@ CREATE TABLE `auth_user_user_permissions` (
 --
 
 CREATE TABLE `booked_at` (
-  `Hotel_ID` varchar(255) NOT NULL,
+  `Hotel_ID` int(11) NOT NULL,
   `Room_Number` int(11) NOT NULL,
   `Booking_Number` int(11) NOT NULL,
-  `Customer_ID` varchar(255) NOT NULL
+  `Customer_ID` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
@@ -277,7 +277,7 @@ CREATE TABLE `booked_at` (
 
 CREATE TABLE `booking` (
   `Number` int(11) NOT NULL,
-  `Customer_ID` varchar(255) NOT NULL,
+  `Customer_ID` int(11) NOT NULL,
   `Check_Out_Date` date NOT NULL,
   `Check_In_Date` date NOT NULL,
   `CC_Number` varchar(255) NOT NULL,
@@ -309,17 +309,10 @@ CREATE TABLE `credit_card` (
   `CC_Number` varchar(255) NOT NULL,
   `Cardholder_Name` varchar(255) NOT NULL,
   `Expiry` date NOT NULL,
-  `CVV` varchar(255) NOT NULL,
+  `CVV` int(11) NOT NULL,
   `Street_Address` varchar(255) NOT NULL,
   `Postal_Code` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
---
--- Dumping data for table `credit_card`
---
-
-INSERT INTO `credit_card` (`CC_Number`, `Cardholder_Name`, `Expiry`, `CVV`, `Street_Address`, `Postal_Code`) VALUES
-('123456789', 'hello', '0000-00-00', 'a', 'a', 'a');
 
 -- --------------------------------------------------------
 
@@ -328,7 +321,7 @@ INSERT INTO `credit_card` (`CC_Number`, `Cardholder_Name`, `Expiry`, `CVV`, `Str
 --
 
 CREATE TABLE `customer` (
-  `Customer_ID` varchar(255) NOT NULL,
+  `Customer_ID` int(11) NOT NULL,
   `Username` varchar(255) NOT NULL,
   `Password` varchar(255) NOT NULL,
   `Phone_Number` varchar(255) NOT NULL,
@@ -441,10 +434,10 @@ CREATE TABLE `django_session` (
 --
 
 CREATE TABLE `employee` (
-  `Employee_ID` varchar(255) NOT NULL,
+  `Employee_ID` int(11) NOT NULL,
   `Username` varchar(255) NOT NULL,
   `Password` varchar(255) NOT NULL,
-  `Hotel_ID` varchar(255) NOT NULL,
+  `Hotel_ID` int(11) NOT NULL,
   `Birthdate` varchar(255) NOT NULL,
   `Job_Title` varchar(255) NOT NULL,
   `Full_Name` varchar(255) NOT NULL,
@@ -458,7 +451,7 @@ CREATE TABLE `employee` (
 --
 
 CREATE TABLE `hotel` (
-  `ID` varchar(255) NOT NULL,
+  `ID` int(11) NOT NULL,
   `Address` varchar(255) NOT NULL,
   `Name` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
@@ -509,7 +502,7 @@ CREATE TABLE `payment` (
 
 CREATE TABLE `room` (
   `Number` int(11) NOT NULL,
-  `Hotel_ID` varchar(255) NOT NULL,
+  `Hotel_ID` int(11) NOT NULL,
   `Type` varchar(255) NOT NULL,
   `Beds` varchar(255) NOT NULL,
   `Floor` varchar(255) NOT NULL,
@@ -526,8 +519,8 @@ CREATE TABLE `room` (
 --
 
 CREATE TABLE `service` (
-  `Service_ID` varchar(255) NOT NULL,
-  `Hotel_ID` varchar(255) NOT NULL,
+  `Service_ID` int(11) NOT NULL,
+  `Hotel_ID` int(11) NOT NULL,
   `Description` varchar(255) NOT NULL,
   `Price` float NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
