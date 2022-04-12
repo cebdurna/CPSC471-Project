@@ -1,0 +1,34 @@
+{
+	"info": {
+		"_postman_id": "f0cc4281-e8cf-44d5-a87e-f7bfd585dd93",
+		"name": "Services",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "services",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8000/services?hotel=1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"services"
+					],
+					"query": [
+						{
+							"key": "hotel",
+							"value": "1"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
