@@ -9,4 +9,5 @@ urlpatterns = [
     path('invoice_detail/payment', views.Payment.as_view(), name='payment'),
     path('login', views.Login.as_view(), name='login'),
     path('rooms', views.Rooms.as_view(), name='rooms'),
+    path('bookings', views.Bookings.as_view(), name='bookings'),
 ]

@@ -43,6 +43,28 @@ class Rooms(APIView):
             dicts = dictfetchall(cursor)
             return Response(dicts)
         return Response()
+        
+class Bookings(APIView):
+    def get(self, request):
+        with connection.cursor() as cursor:
+            cursor.callproc('employeebookingsget', [request.query_params["hotelID"]])
+            dicts = dictfetchall(cursor)
+            return Response(dicts)
+        return Response()
+        
+    def post(self, request):
+        with connection.cursor() as cursor:
+            cursor.callproc('employeebookingspost', [request.query_params["customerID"], request.query_params["roomNumber"], request.query_params["checkInDate"], request.query_params["checkOutDate"], request.query_params["ccNumber"], request.query_params["ccName"], request.query_params["ccExpiry"], request.query_params["cvv"], request.query_params["ccAddress"], request.query_params["ccPostal"]])
+            dicts = dictfetchall(cursor)
+            return Response()
+        return Response()
+        
+    def put(self, request):
+        with connection.cursor() as cursor:
+            cursor.callproc('employeebookingsput', [request.query_params["bookingNo"], request.query_params["roomNumber"], request.query_params["checkInDate"], request.query_params["checkOutDate"], request.query_params["ccNumber"], request.query_params["ccName"], request.query_params["ccExpiry"], request.query_params["cvv"], request.query_params["ccAddress"], request.query_params["ccPostal"]])
+            dicts = dictfetchall(cursor)
+            return Response()
+        return Response()
 
 class Invoice_Detail(APIView):
 
