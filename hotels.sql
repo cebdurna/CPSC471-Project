@@ -244,21 +244,19 @@ from invoice$$
 DELIMITER ;
 
 DELIMITER $$
-CREATE DEFINER=`root`@`localhost` PROCEDURE `invoice_detail_get`(IN `invoice_id` INT)
+CREATE DEFINER=`root`@`localhost` PROCEDURE `invoice_detail_get_payment`(IN `invoice_id` INT)
     READS SQL DATA
-BEGIN
-select * 
-from invoice
-where invoice.Invoice_ID = invoice_id;
+SELECT payment.Transaction_Number, paid_with.CC_Number, payment.Amount, payment.Date
+FROM (payment JOIN paid_with ON payment.Transaction_Number=paid_with.Transaction_Number AND payment.Invoice_ID=paid_with.Invoice_ID)
+WHERE paid_with.Invoice_ID=invoice_id$$
+DELIMITER ;
 
-select * 
-from charge
-where charge.Invoice_ID = invoice_id;
-
-select * 
-from payment
-where payment.Invoice_ID = invoice_id;
-END$$
+DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `invoice_detail_get_charges`(IN `invoice_id` INT)
+    READS SQL DATA
+SELECT *
+FROM charge
+WHERE charge.Invoice_ID=invoice_id$$
 DELIMITER ;
 
 DELIMITER $$
