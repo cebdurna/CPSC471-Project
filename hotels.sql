@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Apr 07, 2022 at 11:29 PM
+-- Generation Time: Apr 11, 2022 at 01:32 AM
 -- Server version: 8.0.17
 -- PHP Version: 7.3.10
 
@@ -21,7 +21,6 @@ SET time_zone = "+00:00";
 --
 -- Database: `hotels`
 --
-
 CREATE DATABASE hotels;
 
 USE hotels;
@@ -30,117 +29,6 @@ DELIMITER $$
 --
 -- Procedures
 --
-CREATE DEFINER=`root`@`localhost` PROCEDURE `customeravailabilityget` (IN `checkInDate` DATE, IN `checkOutDate` DATE)  NO SQL
-SELECT room.Number
-FROM room
-WHERE NOT EXISTS (
-	SELECT room2.Number
-    FROM ((room as room2 JOIN booked_at ON room2.Number=booked_at.Room_Number AND room2.Hotel_ID=booked_at.Hotel_ID)
-   		JOIN booking ON booking.Customer_ID=booked_at.Customer_ID AND booking.Number=booked_at.Booking_Number)
-    WHERE (checkOutDate > booking.Check_In_Date AND checkInDate < booking.Check_Out_Date) AND room2.Number = room.Number
-)$$
-
-CREATE DEFINER=`root`@`localhost` PROCEDURE `customerbookingget` (IN `customerID` VARCHAR(255))  NO SQL
-SELECT booking.Number, booked_at.Room_Number, booking.Check_In_Date, booking.Check_Out_Date, booking.CC_Number, booking.Invoice_ID, Sum(charge.Tax + charge.Price)
-
-FROM (((booking JOIN booked_at ON booking.Number=booked_at.Booking_Number AND booking.Customer_ID=booked_at.Customer_ID)
-     	JOIN room ON room.Number=booked_at.Room_Number AND room.Hotel_ID=booked_at.Hotel_ID)
-        		JOIN charge ON charge.Invoice_ID=booking.Invoice_ID)
-
-WHERE booking.Customer_ID=customerID
-
-GROUP BY Invoice_ID$$
-
-CREATE DEFINER=`root`@`localhost` PROCEDURE `customerinvoicedetailcharges` (IN `invoiceID` VARCHAR(255))  NO SQL
-SELECT charge.Description, charge.Price, charge.Tax, charge.ChargeTime
-FROM charge
-WHERE charge.Invoice_ID=invoiceID$$
-
-CREATE DEFINER=`root`@`localhost` PROCEDURE `customerinvoicedetailpayments` (IN `invoiceID` VARCHAR(255))  NO SQL
-SELECT payment.Transaction_Number, paid_with.CC_Number, payment.Amount, payment.Date
-FROM (payment JOIN paid_with ON payment.Transaction_Number=paid_with.Transaction_Number AND payment.Invoice_ID=paid_with.Invoice_ID)
-WHERE paid_with.Invoice_ID=invoiceID$$
-
-CREATE DEFINER=`root`@`localhost` PROCEDURE `customerinvoiceget` (IN `customerID` VARCHAR(255))  NO SQL
-SELECT invoice.Invoice_ID, invoice.Format, invoice.Date_created, invoice.Date_due, booking.Number as booking_no, SUM(charge.Price + charge.Tax) as total, payments.TotalAmount as total_paid
-FROM (((invoice JOIN booking ON invoice.Invoice_ID=booking.Invoice_ID)
-      JOIN charge ON invoice.Invoice_ID=charge.Invoice_ID)
-      		JOIN (
-                SELECT payment.Invoice_ID, SUM(payment.Amount) as TotalAmount
-                FROM payment
-                GROUP BY payment.Invoice_ID) payments ON invoice.Invoice_ID=payments.Invoice_ID)
-WHERE booking.Customer_ID=customerID
-
-GROUP BY Invoice_ID$$
-
-CREATE DEFINER=`root`@`localhost` PROCEDURE `customerloginget` (IN `username` VARCHAR(255), IN `password` VARCHAR(255))  NO SQL
-SELECT Customer_ID
-FROM customer
-WHERE customer.Username = username AND customer.Password = password$$
-
-CREATE DEFINER=`root`@`localhost` PROCEDURE `customer_registration_post` (IN `username` VARCHAR(255), IN `password` VARCHAR(255), IN `phone_no` VARCHAR(255), IN `email` VARCHAR(255), IN `birthdate` DATE, IN `name` VARCHAR(255))  MODIFIES SQL DATA
-BEGIN
-insert into customer(Customer_ID, Username, Password, Phone_Number, Email, Birthdate, Full_Name)
-values(UUID(), username, password, phone_no, email, birthdate, name);
-
-select Customer_ID
-from customer
-where customer.password = password and customer.username = username;
-END$$
-
-CREATE DEFINER=`root`@`localhost` PROCEDURE `employee_invoice_detail_payment` (IN `invoice_id` VARCHAR(255), IN `cc_no` VARCHAR(255), IN `amount` FLOAT, IN `date` DATE)  MODIFIES SQL DATA
-BEGIN
-insert into payment(Invoice_ID, Amount, Date) values(invoice_id, amount, date);
-DO SLEEP(0.2);
-insert into paid_with values(cc_no,LAST_INSERT_ID(),invoice_id);
-END$$
-
-CREATE DEFINER=`root`@`localhost` PROCEDURE `customerbookingpost` (IN `customerID` VARCHAR(255), IN `roomNumber` VARCHAR(255), IN `checkInDate` DATE, IN `checkOutDate` DATE, IN `ccNumber` VARCHAR(255), IN `ccName` VARCHAR(255), IN `ccExpiry` DATE, IN `cvv` INT, IN `ccAddress` VARCHAR(255), IN `ccPostal` VARCHAR(255))  NO SQL
-BEGIN
-
-SET @total = (
-	SELECT room.Rate
-	FROM room
-	WHERE room.Number = roomNumber
-);
-
-SET @tax = (@total * 0.05);
-
-INSERT IGNORE INTO credit_card
-VALUES (ccNumber, ccName, ccExpiry, cvv, ccAddress, ccPostal);
-
-# Might need to make invoice id column an integer for the MAX function
-# Jeff already set it to integer type in his local branch
-
-SET @invoice_id = (SELECT IFNULL(MAX(Invoice_ID) + 1, 1) FROM invoice);
-
-INSERT INTO invoice
-VALUES (@invoice_id, "Digital", CAST(NOW() as date), checkInDate);
-
-SET @charge_id = (SELECT IFNULL(MAX(Charge_ID) + 1, 1) FROM charge);
-
-INSERT INTO charge
-VALUES (@charge_id, @invoice_id, "Room(s) Charge", @tax, @total, NOW());
-
-# Now make booking\
-
-SET @booking_number = (SELECT IFNULL(MAX(Number) + 1, 1) FROM booking);
-
-INSERT INTO booking
-VALUES (@booking_number, customerID, checkOutDate, checkInDate, ccNumber, @invoice_id);
-
-# Now make booked_at
-
-INSERT INTO booked_at
-VALUES ("1", roomNumber, @booking_number, customerID);
-
-END$$
-
-CREATE DEFINER=`root`@`localhost` PROCEDURE `servicesget`(IN `hotel` VARCHAR(255))
-    NO SQL
-SELECT service.Description, service.Price
-FROM service
-WHERE service.Hotel_ID = hotel$$
 
 DELIMITER ;
 
@@ -456,6 +344,13 @@ CREATE TABLE `hotel` (
   `Name` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
+--
+-- Dumping data for table `hotel`
+--
+
+INSERT INTO `hotel` (`ID`, `Address`, `Name`) VALUES
+('a1b2c3', '2500 University Dr NW Calgary AB T2N 1N4', 'Our Wonderful Hotel');
+
 -- --------------------------------------------------------
 
 --
@@ -481,6 +376,13 @@ CREATE TABLE `paid_with` (
   `Invoice_ID` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
+--
+-- Dumping data for table `paid_with`
+--
+
+INSERT INTO `paid_with` (`CC_Number`, `Transaction_Number`, `Invoice_ID`) VALUES
+('123456789', 0, 'abcdef');
+
 -- --------------------------------------------------------
 
 --
@@ -493,6 +395,13 @@ CREATE TABLE `payment` (
   `Amount` float NOT NULL,
   `Date` date NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Dumping data for table `payment`
+--
+
+INSERT INTO `payment` (`Transaction_Number`, `Invoice_ID`, `Amount`, `Date`) VALUES
+(0, 'abcdef', 0.01, '2022-01-01');
 
 -- --------------------------------------------------------
 
@@ -524,6 +433,14 @@ CREATE TABLE `service` (
   `Description` varchar(255) NOT NULL,
   `Price` float NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Dumping data for table `service`
+--
+
+INSERT INTO `service` (`Service_ID`, `Hotel_ID`, `Description`, `Price`) VALUES
+('hello', 'a1b2c3', 'Shuttle', 2.5),
+('myservices', 'a1b2c3', 'Massage', 34.5);
 
 --
 -- Indexes for dumped tables
