@@ -218,13 +218,6 @@ CREATE TABLE `customer` (
   `Full_Name` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
---
--- Dumping data for table `customer`
---
-
-INSERT INTO `customer` (`Customer_ID`, `Username`, `Password`, `Phone_Number`, `Email`, `Birthdate`, `Full_Name`) VALUES
-('0b2aaec7-b6ca-11ec-a833-2cf05d928cb4', 'abc', '123', '123456', 'abcdef@aaa', '2022-01-01', 'hello');
-
 -- --------------------------------------------------------
 
 --
@@ -344,13 +337,6 @@ CREATE TABLE `hotel` (
   `Name` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
---
--- Dumping data for table `hotel`
---
-
-INSERT INTO `hotel` (`ID`, `Address`, `Name`) VALUES
-('a1b2c3', '2500 University Dr NW Calgary AB T2N 1N4', 'Our Wonderful Hotel');
-
 -- --------------------------------------------------------
 
 --
@@ -376,13 +362,6 @@ CREATE TABLE `paid_with` (
   `Invoice_ID` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
---
--- Dumping data for table `paid_with`
---
-
-INSERT INTO `paid_with` (`CC_Number`, `Transaction_Number`, `Invoice_ID`) VALUES
-('123456789', 0, 'abcdef');
-
 -- --------------------------------------------------------
 
 --
@@ -395,13 +374,6 @@ CREATE TABLE `payment` (
   `Amount` float NOT NULL,
   `Date` date NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
---
--- Dumping data for table `payment`
---
-
-INSERT INTO `payment` (`Transaction_Number`, `Invoice_ID`, `Amount`, `Date`) VALUES
-(0, 'abcdef', 0.01, '2022-01-01');
 
 -- --------------------------------------------------------
 
@@ -434,17 +406,6 @@ CREATE TABLE `service` (
   `Price` float NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
---
--- Dumping data for table `service`
---
-
-INSERT INTO `service` (`Service_ID`, `Hotel_ID`, `Description`, `Price`) VALUES
-('hello', 'a1b2c3', 'Shuttle', 2.5),
-('myservices', 'a1b2c3', 'Massage', 34.5);
-
---
--- Indexes for dumped tables
---
 
 --
 -- Indexes for table `auth_group`
