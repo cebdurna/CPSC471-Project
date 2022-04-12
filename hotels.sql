@@ -260,10 +260,15 @@ WHERE charge.Invoice_ID=invoice_id$$
 DELIMITER ;
 
 DELIMITER $$
-CREATE DEFINER=`root`@`localhost` PROCEDURE `employee_invoice_detail_charge`(IN `invoice_id` INT, IN `description` VARCHAR(255), IN `tax` FLOAT, IN `price` FLOAT, IN `charge_time` DATETIME)
+CREATE DEFINER=`root`@`localhost` PROCEDURE `employee_invoice_detail_charge`(IN `invoice_id` INT, IN `description` VARCHAR(255), IN `price` FLOAT, IN `charge_time` DATETIME)
     MODIFIES SQL DATA
+BEGIN
+set @tax = (0.05 * price);
+
 insert into charge(Invoice_ID, Description, Tax, Price, ChargeTime)
-values(invoice_id, description, tax, price, charge_time)$$
+values(invoice_id, description, @tax, price, charge_time);
+
+END$$
 DELIMITER ;
 
 DELIMITER $$
@@ -285,10 +290,10 @@ where invoice.Invoice_ID=invoice_id$$
 DELIMITER ;
 
 DELIMITER $$
-CREATE DEFINER=`root`@`localhost` PROCEDURE `invoice_post`(IN `invoice_id` INT, IN `form` VARCHAR(255), IN `date_created` DATE, IN `date_due` DATE)
+CREATE DEFINER=`root`@`localhost` PROCEDURE `invoice_post`(IN `form` VARCHAR(255), IN `date_created` DATE, IN `date_due` DATE)
     MODIFIES SQL DATA
-insert into invoice
-values(invoice_id, form, date_created, date_due)$$
+insert into invoice (invoice.Format, invoice.Date_created, invoice.Date_due)
+values(form, date_created, date_due)$$
 DELIMITER ;
 
 DELIMITER $$
@@ -306,10 +311,10 @@ from service$$
 DELIMITER ;
 
 DELIMITER $$
-CREATE DEFINER=`root`@`localhost` PROCEDURE `services_post`(IN `service_id` INT, IN `hotel_id` INT, IN `description` VARCHAR(255), IN `price` FLOAT)
+CREATE DEFINER=`root`@`localhost` PROCEDURE `services_post`(IN `hotel_id` INT, IN `description` VARCHAR(255), IN `price` FLOAT)
     MODIFIES SQL DATA
-insert into service
-values(service_id, hotel_id, description, price)$$
+insert into service (service.Hotel_ID, service.Description, service.Price)
+values(hotel_id, description, price)$$
 DELIMITER ;
 
 DELIMITER $$
@@ -331,7 +336,7 @@ where booked_at.Hotel_ID = hotel_id and booked_at.Room_Number = room_no and  boo
 set @invoice_id = (
     select booking.Invoice_ID 
     from booking 
-    where booked_at.Hotel_ID = hotel_id AND booked_at.Room_Number = room_no AND booked_at.Booking_Number = book_no AND booked_at.Customer_ID = customer_id);
+    where booking.Number= book_no AND booking.Customer_ID = customer_id);
 
 delete from booking
 where booking.Number = book_no and booking.Customer_ID = customer_id;

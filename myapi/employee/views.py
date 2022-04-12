@@ -14,6 +14,12 @@ class Invoice(APIView):
             dicts = dictfetchall(cursor)
             return Response(dicts)
         return Response()
+    def post(self, request):
+        with connection.cursor() as cursor:
+            cursor.callproc('invoice_post', [request.query_params["form"], request.query_params["date_created"], request.query_params["date_due"]])
+            dicts = dictfetchall(cursor)
+            return Response(dicts)
+        return Response()
 
 class Login(APIView):
     def get(self, request):
@@ -83,13 +89,6 @@ class Bookings(APIView):
 
 
 class Invoice_Detail(APIView):
-    def post(self, request):
-        with connection.cursor() as cursor:
-            cursor.callproc('invoice_post', [request.query_params["invoice_id"], request.query_params["form"], request.query_params["date_created"], request.query_params["date_due"]])
-            dicts = dictfetchall(cursor)
-            return Response(dicts)
-        return Response()
-
     def get(self, request):
         with connection.cursor() as cursor:
             cursor.callproc('invoice_detail_get_charges', [request.query_params["invoice_id"]])
@@ -118,7 +117,7 @@ class Invoice_Detail(APIView):
 class Charge(APIView):
     def post(self, request):
         with connection.cursor() as cursor:
-            cursor.callproc('employee_invoice_detail_charge', [request.query_params["invoice_id"], request.query_params["description"], request.query_params["tax"], request.query_params["price"],request.query_params["charge_time"]])
+            cursor.callproc('employee_invoice_detail_charge', [request.query_params["invoice_id"], request.query_params["description"], request.query_params["price"],request.query_params["charge_time"]])
             dicts = dictfetchall(cursor)
             return Response(dicts)
         return Response()
@@ -150,7 +149,7 @@ class Service(APIView):
 
     def post(self, request):
         with connection.cursor() as cursor:
-            cursor.callproc('services_post', [request.query_params["service_id"], request.query_params["hotel_id"], request.query_params["description"],request.query_params["price"]])
+            cursor.callproc('services_post', [request.query_params["hotel_id"], request.query_params["description"],request.query_params["price"]])
             dicts = dictfetchall(cursor)
             return Response(dicts)
         return Response()
