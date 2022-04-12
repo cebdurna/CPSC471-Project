@@ -29,126 +29,10 @@ DELIMITER $$
 --
 -- Procedures
 --
-CREATE DEFINER=`root`@`localhost` PROCEDURE `bookings_delete` (IN `book_no` INT, IN `customer_id` VARCHAR(255), IN `hotel_id` VARCHAR(255), IN `room_no` INT)  MODIFIES SQL DATA
-BEGIN
-
-delete from booked_at
-where booked_at.Hotel_ID = hotel_id and booked_at.Room_Number = room_no and  booked_at.Booking_Number = book_no and booked_at.Customer_ID = customer_id;
-
-delete from booking
-where booking.Number = book_no and booking.Customer_ID = customer_id;
-
-END$$
-
-CREATE DEFINER=`root`@`localhost` PROCEDURE `bookings_get` ()  READS SQL DATA
-select * from booking$$
-
-CREATE DEFINER=`root`@`localhost` PROCEDURE `customerbookingget` (IN `customerID` VARCHAR(255))  NO SQL
-SELECT booking.Number, booked_at.Room_Number, booking.Check_In_Date, booking.Check_Out_Date, booking.CC_Number, booking.Invoice_ID, Sum(charge.Tax + charge.Price)
-
-FROM (((booking JOIN booked_at ON booking.Number=booked_at.Booking_Number AND booking.Customer_ID=booked_at.Customer_ID)
-     	JOIN room ON room.Number=booked_at.Room_Number AND room.Hotel_ID=booked_at.Hotel_ID)
-        		JOIN charge ON charge.Invoice_ID=booking.Invoice_ID)
-
-WHERE booking.Customer_ID=customerID
-
-GROUP BY Invoice_ID$$
-
-CREATE DEFINER=`root`@`localhost` PROCEDURE `customerinvoicedetailcharges` (IN `invoiceID` VARCHAR(255))  NO SQL
-SELECT charge.Description, charge.Price, charge.Tax, charge.ChargeTime
-FROM charge
-WHERE charge.Invoice_ID=invoiceID$$
-
-CREATE DEFINER=`root`@`localhost` PROCEDURE `customerinvoicedetailpayments` (IN `invoiceID` VARCHAR(255))  NO SQL
-SELECT payment.Transaction_Number, paid_with.CC_Number, payment.Amount, payment.Date
-FROM (payment JOIN paid_with ON payment.Transaction_Number=paid_with.Transaction_Number AND payment.Invoice_ID=paid_with.Invoice_ID)
-WHERE paid_with.Invoice_ID=invoiceID$$
-
-CREATE DEFINER=`root`@`localhost` PROCEDURE `customerinvoiceget` (IN `customerID` VARCHAR(255))  NO SQL
-SELECT invoice.Invoice_ID, invoice.Format, invoice.Date_created, invoice.Date_due, booking.Number as booking_no, SUM(charge.Price + charge.Tax) as total, payments.TotalAmount as total_paid
-FROM (((invoice JOIN booking ON invoice.Invoice_ID=booking.Invoice_ID)
-      JOIN charge ON invoice.Invoice_ID=charge.Invoice_ID)
-      		JOIN (
-                SELECT payment.Invoice_ID, SUM(payment.Amount) as TotalAmount
-                FROM payment
-                GROUP BY payment.Invoice_ID) payments ON invoice.Invoice_ID=payments.Invoice_ID)
-WHERE booking.Customer_ID=customerID
-
-GROUP BY Invoice_ID$$
-
-CREATE DEFINER=`root`@`localhost` PROCEDURE `customerloginget` (IN `username` VARCHAR(255), IN `password` VARCHAR(255))  NO SQL
-SELECT Customer_ID
-FROM customer
-WHERE customer.Username = username AND customer.Password = password$$
-
-CREATE DEFINER=`root`@`localhost` PROCEDURE `customer_registration_post` (IN `username` VARCHAR(255), IN `password` VARCHAR(255), IN `phone_no` VARCHAR(255), IN `email` VARCHAR(255), IN `birthdate` DATE, IN `name` VARCHAR(255))  MODIFIES SQL DATA
-BEGIN
-insert into customer(Customer_ID, Username, Password, Phone_Number, Email, Birthdate, Full_Name)
-values(UUID(), username, password, phone_no, email, birthdate, name);
-
-select Customer_ID
-from customer
-where customer.password = password and customer.username = username;
-END$$
-
-CREATE DEFINER=`root`@`localhost` PROCEDURE `employee_invoice_detail_charge` (IN `invoice_id` VARCHAR(255), IN `description` VARCHAR(255), IN `tax` FLOAT, IN `price` FLOAT, IN `charge_time` DATETIME)  MODIFIES SQL DATA
-insert into charge(Invoice_ID, Description, Tax, Price, ChargeTime)
-values(invoice_id, description, tax, price, charge_time)$$
-
-CREATE DEFINER=`root`@`localhost` PROCEDURE `employee_invoice_detail_payment` (IN `invoice_id` VARCHAR(255), IN `cc_no` VARCHAR(255), IN `amount` FLOAT, IN `date` DATE)  MODIFIES SQL DATA
-BEGIN
-insert into payment(Invoice_ID, Amount, Date) values(invoice_id, amount, date);
-DO SLEEP(0.2);
-insert into paid_with values(cc_no,LAST_INSERT_ID(),invoice_id);
-END$$
-
-CREATE DEFINER=`root`@`localhost` PROCEDURE `invoice_detail_get` (IN `invoice_id` VARCHAR(255))  READS SQL DATA
-BEGIN
-select * 
-from invoice
-where invoice.Invoice_ID = invoice_id;
-
-select * 
-from charge
-where charge.Invoice_ID = invoice_id;
-
-select * 
-from payment
-where payment.Invoice_ID = invoice_id;
-END$$
-
-CREATE DEFINER=`root`@`localhost` PROCEDURE `invoice_detail_update` (IN `invoice_id` VARCHAR(255), IN `form` VARCHAR(255), IN `date_created` DATE, IN `date_due` DATE)  MODIFIES SQL DATA
-update invoice
-set invoice.Format = form, invoice.Date_created=date_created, invoice.Date_due=date_due
-where invoice.Invoice_ID=invoice_id$$
-
-CREATE DEFINER=`root`@`localhost` PROCEDURE `invoice_getall` ()  READS SQL DATA
-select * 
-from invoice$$
-
-CREATE DEFINER=`root`@`localhost` PROCEDURE `invoice_post` (IN `invoice_id` VARCHAR(255), IN `form` VARCHAR(255), IN `date_created` DATE, IN `date_due` DATE)  MODIFIES SQL DATA
-insert into invoice
-values(invoice_id, form, date_created, date_due)$$
-
-CREATE DEFINER=`root`@`localhost` PROCEDURE `services_delete` (IN `service_id` VARCHAR(255))  MODIFIES SQL DATA
-delete FROM service
-where service.Service_ID = service_id$$
-
-CREATE DEFINER=`root`@`localhost` PROCEDURE `services_get` ()  READS SQL DATA
-select * 
-from service$$
-
-CREATE DEFINER=`root`@`localhost` PROCEDURE `services_post` (IN `service_id` VARCHAR(255), IN `hotel_id` VARCHAR(255), IN `description` VARCHAR(255), IN `price` FLOAT)  MODIFIES SQL DATA
-insert into service
-values(service_id, hotel_id, description, price)$$
-
-CREATE DEFINER=`root`@`localhost` PROCEDURE `services_update` (IN `service_id` VARCHAR(255), IN `hotel_id` VARCHAR(255), IN `description` VARCHAR(255), IN `price` FLOAT)  MODIFIES SQL DATA
-update service
-set service.Hotel_ID = hotel_id, service.Description = description, service.Price = price
-where service.Service_ID = service_id$$
 
 DELIMITER ;
-DELIMITER ;
+
+
 
 -- --------------------------------------------------------
 
@@ -267,10 +151,10 @@ CREATE TABLE `auth_user_user_permissions` (
 --
 
 CREATE TABLE `booked_at` (
-  `Hotel_ID` varchar(255) NOT NULL,
+  `Hotel_ID` int(11) NOT NULL,
   `Room_Number` int(11) NOT NULL,
   `Booking_Number` int(11) NOT NULL,
-  `Customer_ID` varchar(255) NOT NULL
+  `Customer_ID` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
@@ -281,11 +165,11 @@ CREATE TABLE `booked_at` (
 
 CREATE TABLE `booking` (
   `Number` int(11) NOT NULL,
-  `Customer_ID` varchar(255) NOT NULL,
+  `Customer_ID` int(11) NOT NULL,
   `Check_Out_Date` date NOT NULL,
   `Check_In_Date` date NOT NULL,
   `CC_Number` varchar(255) NOT NULL,
-  `Invoice_ID` varchar(255) NOT NULL
+  `Invoice_ID` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
@@ -296,7 +180,7 @@ CREATE TABLE `booking` (
 
 CREATE TABLE `charge` (
   `Charge_ID` int(11) NOT NULL,
-  `Invoice_ID` varchar(255) NOT NULL,
+  `Invoice_ID` int(11) NOT NULL,
   `Description` varchar(255) NOT NULL,
   `Tax` float NOT NULL,
   `Price` float NOT NULL,
@@ -313,17 +197,10 @@ CREATE TABLE `credit_card` (
   `CC_Number` varchar(255) NOT NULL,
   `Cardholder_Name` varchar(255) NOT NULL,
   `Expiry` date NOT NULL,
-  `CVV` varchar(255) NOT NULL,
+  `CVV` int(11) NOT NULL,
   `Street_Address` varchar(255) NOT NULL,
   `Postal_Code` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
---
--- Dumping data for table `credit_card`
---
-
-INSERT INTO `credit_card` (`CC_Number`, `Cardholder_Name`, `Expiry`, `CVV`, `Street_Address`, `Postal_Code`) VALUES
-('123456789', 'hello', '0000-00-00', 'a', 'a', 'a');
 
 -- --------------------------------------------------------
 
@@ -332,7 +209,7 @@ INSERT INTO `credit_card` (`CC_Number`, `Cardholder_Name`, `Expiry`, `CVV`, `Str
 --
 
 CREATE TABLE `customer` (
-  `Customer_ID` varchar(255) NOT NULL,
+  `Customer_ID` int(11) NOT NULL,
   `Username` varchar(255) NOT NULL,
   `Password` varchar(255) NOT NULL,
   `Phone_Number` varchar(255) NOT NULL,
@@ -445,10 +322,10 @@ CREATE TABLE `django_session` (
 --
 
 CREATE TABLE `employee` (
-  `Employee_ID` varchar(255) NOT NULL,
+  `Employee_ID` int(11) NOT NULL,
   `Username` varchar(255) NOT NULL,
   `Password` varchar(255) NOT NULL,
-  `Hotel_ID` varchar(255) NOT NULL,
+  `Hotel_ID` int(11) NOT NULL,
   `Birthdate` varchar(255) NOT NULL,
   `Job_Title` varchar(255) NOT NULL,
   `Full_Name` varchar(255) NOT NULL,
@@ -462,7 +339,7 @@ CREATE TABLE `employee` (
 --
 
 CREATE TABLE `hotel` (
-  `ID` varchar(255) NOT NULL,
+  `ID` int(11) NOT NULL,
   `Address` varchar(255) NOT NULL,
   `Name` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
@@ -481,19 +358,11 @@ INSERT INTO `hotel` (`ID`, `Address`, `Name`) VALUES
 --
 
 CREATE TABLE `invoice` (
-  `Invoice_ID` varchar(255) NOT NULL,
+  `Invoice_ID` int(11) NOT NULL,
   `Format` varchar(255) NOT NULL,
   `Date_created` date NOT NULL,
   `Date_due` date NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
---
--- Dumping data for table `invoice`
---
-
-INSERT INTO `invoice` (`Invoice_ID`, `Format`, `Date_created`, `Date_due`) VALUES
-('abcdef', 'printout', '2022-01-01', '2023-01-02'),
-('qwerty', 'printout', '0000-00-00', '0000-00-00');
 
 -- --------------------------------------------------------
 
@@ -504,7 +373,7 @@ INSERT INTO `invoice` (`Invoice_ID`, `Format`, `Date_created`, `Date_due`) VALUE
 CREATE TABLE `paid_with` (
   `CC_Number` varchar(255) NOT NULL,
   `Transaction_Number` int(11) NOT NULL,
-  `Invoice_ID` varchar(255) NOT NULL
+  `Invoice_ID` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
@@ -522,7 +391,7 @@ INSERT INTO `paid_with` (`CC_Number`, `Transaction_Number`, `Invoice_ID`) VALUES
 
 CREATE TABLE `payment` (
   `Transaction_Number` int(11) NOT NULL,
-  `Invoice_ID` varchar(255) NOT NULL,
+  `Invoice_ID` int(11) NOT NULL,
   `Amount` float NOT NULL,
   `Date` date NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
@@ -542,7 +411,7 @@ INSERT INTO `payment` (`Transaction_Number`, `Invoice_ID`, `Amount`, `Date`) VAL
 
 CREATE TABLE `room` (
   `Number` int(11) NOT NULL,
-  `Hotel_ID` varchar(255) NOT NULL,
+  `Hotel_ID` int(11) NOT NULL,
   `Type` varchar(255) NOT NULL,
   `Beds` varchar(255) NOT NULL,
   `Floor` varchar(255) NOT NULL,
@@ -559,8 +428,8 @@ CREATE TABLE `room` (
 --
 
 CREATE TABLE `service` (
-  `Service_ID` varchar(255) NOT NULL,
-  `Hotel_ID` varchar(255) NOT NULL,
+  `Service_ID` int(11) NOT NULL,
+  `Hotel_ID` int(11) NOT NULL,
   `Description` varchar(255) NOT NULL,
   `Price` float NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
@@ -659,8 +528,7 @@ ALTER TABLE `credit_card`
 --
 ALTER TABLE `customer`
   ADD PRIMARY KEY (`Customer_ID`,`Username`),
-  ADD UNIQUE KEY `Username` (`Username`),
-  ADD UNIQUE KEY `Password` (`Password`);
+  ADD UNIQUE KEY `Username` (`Username`);
 
 --
 -- Indexes for table `django_admin_log`

@@ -8,7 +8,6 @@ from rest_framework.exceptions import APIException
 # Create your views here.
 
 class Booking(APIView):
-
     def get(self, request):
         #if request.query_params["jwt"]
         with connection.cursor() as cursor:
@@ -19,9 +18,9 @@ class Booking(APIView):
 
 
 class Registration(APIView):
-    def get(self, request):
+    def post(self, request):
         with connection.cursor() as cursor:
-            cursor.callproc('customerlogin')
+            cursor.callproc('customer_registration_post',[request.query_params["username"],request.query_params["password"],request.query_params["phone_no"], request.query_params["email"], request.query_params["birthdate"], request.query_params["name"]])
             dicts = dictfetchall(cursor)
             return Response(dicts)
         return Response()
@@ -40,6 +39,13 @@ class Booking(APIView):
             cursor.callproc('customerbookingget', [request.query_params["customerID"]])
             dicts = dictfetchall(cursor)
             return Response(dicts)
+        return Response()
+        
+    def post(self, request):
+        with connection.cursor() as cursor:
+            cursor.callproc('customerbookingpost', [request.query_params["customerID"], request.query_params["roomNumber"], request.query_params["checkInDate"], request.query_params["checkOutDate"], request.query_params["ccNumber"], request.query_params["ccName"], request.query_params["ccExpiry"], request.query_params["cvv"], request.query_params["ccAddress"], request.query_params["ccPostal"]])
+            dicts = dictfetchall(cursor)
+            return Response()
         return Response()
 
 class Invoice_Detail(APIView):
@@ -69,11 +75,11 @@ class Invoice(APIView):
 
             return Response(dicts)
         return Response()
-
-    def post(self, request):
-        #if request.query_params["jwt"]
+        
+class Availability(APIView):
+    def get(self, request):
         with connection.cursor() as cursor:
-            cursor.callproc('customer_registration_post',[request.query_params["username"],request.query_params["password"],request.query_params["phone_no"], request.query_params["email"], request.query_params["birthdate"], request.query_params["name"]])
+            cursor.callproc('customeravailabilityget', [request.query_params["checkInDate"], request.query_params["checkOutDate"]])
             dicts = dictfetchall(cursor)
             return Response(dicts)
         return Response()
