@@ -7,6 +7,14 @@ from django.db import connection
 
 # Create your views here.
 
+class Invoice(APIView):
+    def get(self, request):
+        with connection.cursor() as cursor:
+            cursor.callproc('invoice_getall')
+            dicts = dictfetchall(cursor)
+            return Response(dicts)
+        return Response()
+
 class Login(APIView):
     def get(self, request):
         with connection.cursor() as cursor:
@@ -65,22 +73,48 @@ class Bookings(APIView):
             dicts = dictfetchall(cursor)
             return Response()
         return Response()
+      
+    def delete(self, request):
+        with connection.cursor() as cursor:
+            cursor.callproc('bookings_delete',[request.query_params["book_no"],request.query_params["hotel_id"]] )
+            dicts = dictfetchall(cursor)
+            return Response(dicts)
+        return Response()
+
 
 class Invoice_Detail(APIView):
-
     def get(self, request):
         with connection.cursor() as cursor:
-            cursor.callproc('')
+            cursor.callproc('invoice_detail_get_charges', [request.query_params["invoice_id"]])
+
+            charges = dictfetchall(cursor)
+
+            cursor.close()
+
+            cursor = connection.cursor()
+
+            cursor.callproc('invoice_detail_get_payment', [request.query_params["invoice_id"]])
+
+            payments = dictfetchall(cursor)
+            finaldict = {"Charges": charges, "Payments":payments}
+            return Response(finaldict)
+        return Response()
+
+    def put(self, request):
+        with connection.cursor() as cursor:
+            cursor.callproc('invoice_detail_update', [request.query_params["invoice_id"],request.query_params["form"], request.query_params["date_created"],request.query_params["date_due"]])
             dicts = dictfetchall(cursor)
-        return Response(dicts)
+            return Response(dicts)
+        return Response()
 
 
 class Charge(APIView):
     def post(self, request):
         with connection.cursor() as cursor:
-            cursor.callproc('employee_invoice_detail_charge', [request.query_params["invoice_id"], request.query_params["description"], request.query_params["tax"], request.query_params["price"],request.query_params["charge_time"]])
+            cursor.callproc('employee_invoice_detail_charge', [request.query_params["invoice_id"], request.query_params["description"], request.query_params["price"],request.query_params["charge_time"]])
             dicts = dictfetchall(cursor)
-        return Response(dicts)
+            return Response(dicts)
+        return Response()
 
 
 class Payment(APIView):
@@ -88,7 +122,38 @@ class Payment(APIView):
         with connection.cursor() as cursor:
             cursor.callproc('employee_invoice_detail_payment', [request.query_params["invoice_id"], request.query_params["cc_no"], request.query_params["amount"], request.query_params["date"]])
             dicts = dictfetchall(cursor)
-        return Response(dicts)
+            return Response(dicts)
+        return Response()
+
+
+class Service(APIView):
+    def delete(self, request):
+        with connection.cursor() as cursor:
+            cursor.callproc('services_delete', [request.query_params["service_id"]])
+            dicts = dictfetchall(cursor)
+            return Response(dicts)
+        return Response()
+
+    def put(self, request):
+        with connection.cursor() as cursor:
+            cursor.callproc('services_update', [request.query_params["service_id"], request.query_params["hotel_id"], request.query_params["description"],request.query_params["price"]])
+            dicts = dictfetchall(cursor)
+            return Response(dicts)
+        return Response()
+
+    def post(self, request):
+        with connection.cursor() as cursor:
+            cursor.callproc('services_post', [request.query_params["hotel_id"], request.query_params["description"],request.query_params["price"]])
+            dicts = dictfetchall(cursor)
+            return Response(dicts)
+        return Response()
+
+    def get(self, request):
+        with connection.cursor() as cursor:
+            cursor.callproc('services_get')
+            dicts = dictfetchall(cursor)
+            return Response(dicts)
+        return Response()
 
 def dictfetchall(cursor):
     desc = cursor.description

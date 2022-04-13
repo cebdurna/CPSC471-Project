@@ -1,0 +1,700 @@
+{
+	"info": {
+		"_postman_id": "704f298b-fae4-4514-88cb-ab98abe46ac6",
+		"name": "Employee",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "employee/login",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8000/employee/login?username=employee1&password=password",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"employee",
+						"login"
+					],
+					"query": [
+						{
+							"key": "username",
+							"value": "employee1"
+						},
+						{
+							"key": "password",
+							"value": "password"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "employee/rooms",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8000/employee/rooms?hotel=1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"employee",
+						"rooms"
+					],
+					"query": [
+						{
+							"key": "hotel",
+							"value": "1"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "employee/rooms",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8000/employee/rooms?room_no=103&hotelID=1&type=Non-Smoking&beds=Two Queens&floor=First&furniture=Couch, Coffee table, and a TV&capacity=4&orientation=North&rate=120",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"employee",
+						"rooms"
+					],
+					"query": [
+						{
+							"key": "room_no",
+							"value": "103"
+						},
+						{
+							"key": "hotelID",
+							"value": "1"
+						},
+						{
+							"key": "type",
+							"value": "Non-Smoking"
+						},
+						{
+							"key": "beds",
+							"value": "Two Queens"
+						},
+						{
+							"key": "floor",
+							"value": "First"
+						},
+						{
+							"key": "furniture",
+							"value": "Couch, Coffee table, and a TV"
+						},
+						{
+							"key": "capacity",
+							"value": "4"
+						},
+						{
+							"key": "orientation",
+							"value": "North"
+						},
+						{
+							"key": "rate",
+							"value": "120"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "employee/rooms",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8000/employee/rooms?room_no=103&hotelID=1&type=Smoking&beds=One Queen&floor=First&furniture=Couch and a TV&capacity=2&orientation=North&rate=90",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"employee",
+						"rooms"
+					],
+					"query": [
+						{
+							"key": "room_no",
+							"value": "103"
+						},
+						{
+							"key": "hotelID",
+							"value": "1"
+						},
+						{
+							"key": "type",
+							"value": "Smoking"
+						},
+						{
+							"key": "beds",
+							"value": "One Queen"
+						},
+						{
+							"key": "floor",
+							"value": "First"
+						},
+						{
+							"key": "furniture",
+							"value": "Couch and a TV"
+						},
+						{
+							"key": "capacity",
+							"value": "2"
+						},
+						{
+							"key": "orientation",
+							"value": "North"
+						},
+						{
+							"key": "rate",
+							"value": "90"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "employee/rooms",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8000/employee/rooms?hotelID=1&roomNo=103",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"employee",
+						"rooms"
+					],
+					"query": [
+						{
+							"key": "hotelID",
+							"value": "1"
+						},
+						{
+							"key": "roomNo",
+							"value": "103"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "employee/bookings",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8000/employee/bookings?hotelID=1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"employee",
+						"bookings"
+					],
+					"query": [
+						{
+							"key": "hotelID",
+							"value": "1"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "employee/bookings",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8000/employee/bookings?customerID=1&roomNumber=101&checkInDate=2022-01-07&checkOutDate=2022-01-08&ccNumber=1111 1111 1111 1111&ccName=John Doe&ccExpiry=2027-07-07&cvv=111&ccAddress=123 Test Drive&ccPostal=A1A 1A1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"employee",
+						"bookings"
+					],
+					"query": [
+						{
+							"key": "customerID",
+							"value": "1"
+						},
+						{
+							"key": "roomNumber",
+							"value": "101"
+						},
+						{
+							"key": "checkInDate",
+							"value": "2022-01-07"
+						},
+						{
+							"key": "checkOutDate",
+							"value": "2022-01-08"
+						},
+						{
+							"key": "ccNumber",
+							"value": "1111 1111 1111 1111"
+						},
+						{
+							"key": "ccName",
+							"value": "John Doe"
+						},
+						{
+							"key": "ccExpiry",
+							"value": "2027-07-07"
+						},
+						{
+							"key": "cvv",
+							"value": "111"
+						},
+						{
+							"key": "ccAddress",
+							"value": "123 Test Drive"
+						},
+						{
+							"key": "ccPostal",
+							"value": "A1A 1A1"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "employee/bookings",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8000/employee/bookings?bookingNo=5&roomNumber=201&checkInDate=2022-01-03&checkOutDate=2022-01-04&ccNumber=1234 1234 1234 1234&ccName=John Doe&ccExpiry=2027-10-10&cvv=222&ccAddress=123 Blah&ccPostal=A1A 1A1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"employee",
+						"bookings"
+					],
+					"query": [
+						{
+							"key": "bookingNo",
+							"value": "5"
+						},
+						{
+							"key": "roomNumber",
+							"value": "201"
+						},
+						{
+							"key": "checkInDate",
+							"value": "2022-01-03"
+						},
+						{
+							"key": "checkOutDate",
+							"value": "2022-01-04"
+						},
+						{
+							"key": "ccNumber",
+							"value": "1234 1234 1234 1234"
+						},
+						{
+							"key": "ccName",
+							"value": "John Doe"
+						},
+						{
+							"key": "ccExpiry",
+							"value": "2027-10-10"
+						},
+						{
+							"key": "cvv",
+							"value": "222"
+						},
+						{
+							"key": "ccAddress",
+							"value": "123 Blah"
+						},
+						{
+							"key": "ccPostal",
+							"value": "A1A 1A1"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "employee/invoice_detail",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8000/employee/invoice_detail?invoice_id=1",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"employee",
+						"invoice_detail"
+					],
+					"query": [
+						{
+							"key": "invoice_id",
+							"value": "1"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "employee/invoice_detail/charge",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "localhost:8000/employee/invoice_detail/charge?invoice_id=1&description=Room Service&price=1.00&charge_time=2022-01-01 00:11:22",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"employee",
+						"invoice_detail",
+						"charge"
+					],
+					"query": [
+						{
+							"key": "invoice_id",
+							"value": "1"
+						},
+						{
+							"key": "description",
+							"value": "Room Service"
+						},
+						{
+							"key": "price",
+							"value": "1.00"
+						},
+						{
+							"key": "charge_time",
+							"value": "2022-01-01 00:11:22"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "employee/invoice_detail/payment",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "localhost:8000/employee/invoice_detail/payment?invoice_id=1&cc_no=1111 1111 1111 1111&amount=1.00&date=2022-01-01",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"employee",
+						"invoice_detail",
+						"payment"
+					],
+					"query": [
+						{
+							"key": "invoice_id",
+							"value": "1"
+						},
+						{
+							"key": "cc_no",
+							"value": "1111 1111 1111 1111"
+						},
+						{
+							"key": "amount",
+							"value": "1.00"
+						},
+						{
+							"key": "date",
+							"value": "2022-01-01"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "employee/invoice_detail",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"url": {
+					"raw": "localhost:8000/employee/invoice_detail?invoice_id=1&form=printout&date_created=2022-01-01&date_due=2023-01-02",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"employee",
+						"invoice_detail"
+					],
+					"query": [
+						{
+							"key": "invoice_id",
+							"value": "1"
+						},
+						{
+							"key": "form",
+							"value": "printout"
+						},
+						{
+							"key": "date_created",
+							"value": "2022-01-01"
+						},
+						{
+							"key": "date_due",
+							"value": "2023-01-02"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "employee/invoice",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8000/employee/invoice",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"employee",
+						"invoice"
+					],
+					"query": [
+						{
+							"key": "",
+							"value": "",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "employee/services",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8000/employee/services",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"employee",
+						"services"
+					],
+					"query": [
+						{
+							"key": "service_id",
+							"value": "myservices",
+							"disabled": true
+						},
+						{
+							"key": "hotel_id",
+							"value": "a1b2c3",
+							"disabled": true
+						},
+						{
+							"key": "description",
+							"value": "Massage",
+							"disabled": true
+						},
+						{
+							"key": "price",
+							"value": "34.50",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "employee/services",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"url": {
+					"raw": "localhost:8000/employee/services?service_id=1&hotel_id=1&description=Shuttle&price=2.50",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"employee",
+						"services"
+					],
+					"query": [
+						{
+							"key": "service_id",
+							"value": "1"
+						},
+						{
+							"key": "hotel_id",
+							"value": "1"
+						},
+						{
+							"key": "description",
+							"value": "Shuttle"
+						},
+						{
+							"key": "price",
+							"value": "2.50"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "employee/services",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "localhost:8000/employee/services?hotel_id=1&description=Shuttle to the spa&price=10.00",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"employee",
+						"services"
+					],
+					"query": [
+						{
+							"key": "hotel_id",
+							"value": "1"
+						},
+						{
+							"key": "description",
+							"value": "Shuttle to the spa"
+						},
+						{
+							"key": "price",
+							"value": "10.00"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "employee/services",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "localhost:8000/employee/services?service_id=3",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"employee",
+						"services"
+					],
+					"query": [
+						{
+							"key": "service_id",
+							"value": "3"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "employee/bookings",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "localhost:8000/employee/bookings?book_no=3&hotel_id=1",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"employee",
+						"bookings"
+					],
+					"query": [
+						{
+							"key": "book_no",
+							"value": "3"
+						},
+						{
+							"key": "customer_id",
+							"value": "1",
+							"disabled": true
+						},
+						{
+							"key": "hotel_id",
+							"value": "1"
+						},
+						{
+							"key": "room_no",
+							"value": "101",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

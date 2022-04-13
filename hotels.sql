@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Apr 07, 2022 at 11:29 PM
+-- Generation Time: Apr 11, 2022 at 01:32 AM
 -- Server version: 8.0.17
 -- PHP Version: 7.3.10
 
@@ -21,7 +21,6 @@ SET time_zone = "+00:00";
 --
 -- Database: `hotels`
 --
-
 CREATE DATABASE hotels;
 
 USE hotels;
@@ -30,6 +29,7 @@ DELIMITER $$
 --
 -- Procedures
 --
+
 CREATE DEFINER=`root`@`localhost` PROCEDURE `customeravailabilityget` (IN `checkInDate` DATE, IN `checkOutDate` DATE)  NO SQL
 SELECT room.Number
 FROM room
@@ -40,7 +40,7 @@ WHERE NOT EXISTS (
     WHERE (checkOutDate > booking.Check_In_Date AND checkInDate < booking.Check_Out_Date) AND room2.Number = room.Number
 )$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `customerbookingget` (IN `customerID` VARCHAR(255))  NO SQL
+CREATE DEFINER=`root`@`localhost` PROCEDURE `customerbookingget` (IN `customerID` int(11))  NO SQL
 SELECT booking.Number, booked_at.Room_Number, booking.Check_In_Date, booking.Check_Out_Date, booking.CC_Number, booking.Invoice_ID, Sum(charge.Tax + charge.Price)
 
 FROM (((booking JOIN booked_at ON booking.Number=booked_at.Booking_Number AND booking.Customer_ID=booked_at.Customer_ID)
@@ -51,51 +51,7 @@ WHERE booking.Customer_ID=customerID
 
 GROUP BY Invoice_ID$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `customerinvoicedetailcharges` (IN `invoiceID` VARCHAR(255))  NO SQL
-SELECT charge.Description, charge.Price, charge.Tax, charge.ChargeTime
-FROM charge
-WHERE charge.Invoice_ID=invoiceID$$
-
-CREATE DEFINER=`root`@`localhost` PROCEDURE `customerinvoicedetailpayments` (IN `invoiceID` VARCHAR(255))  NO SQL
-SELECT payment.Transaction_Number, paid_with.CC_Number, payment.Amount, payment.Date
-FROM (payment JOIN paid_with ON payment.Transaction_Number=paid_with.Transaction_Number AND payment.Invoice_ID=paid_with.Invoice_ID)
-WHERE paid_with.Invoice_ID=invoiceID$$
-
-CREATE DEFINER=`root`@`localhost` PROCEDURE `customerinvoiceget` (IN `customerID` VARCHAR(255))  NO SQL
-SELECT invoice.Invoice_ID, invoice.Format, invoice.Date_created, invoice.Date_due, booking.Number as booking_no, SUM(charge.Price + charge.Tax) as total, payments.TotalAmount as total_paid
-FROM (((invoice JOIN booking ON invoice.Invoice_ID=booking.Invoice_ID)
-      JOIN charge ON invoice.Invoice_ID=charge.Invoice_ID)
-      		JOIN (
-                SELECT payment.Invoice_ID, SUM(payment.Amount) as TotalAmount
-                FROM payment
-                GROUP BY payment.Invoice_ID) payments ON invoice.Invoice_ID=payments.Invoice_ID)
-WHERE booking.Customer_ID=customerID
-
-GROUP BY Invoice_ID$$
-
-CREATE DEFINER=`root`@`localhost` PROCEDURE `customerloginget` (IN `username` VARCHAR(255), IN `password` VARCHAR(255))  NO SQL
-SELECT Customer_ID
-FROM customer
-WHERE customer.Username = username AND customer.Password = password$$
-
-CREATE DEFINER=`root`@`localhost` PROCEDURE `customer_registration_post` (IN `username` VARCHAR(255), IN `password` VARCHAR(255), IN `phone_no` VARCHAR(255), IN `email` VARCHAR(255), IN `birthdate` DATE, IN `name` VARCHAR(255))  MODIFIES SQL DATA
-BEGIN
-insert into customer(Customer_ID, Username, Password, Phone_Number, Email, Birthdate, Full_Name)
-values(UUID(), username, password, phone_no, email, birthdate, name);
-
-select Customer_ID
-from customer
-where customer.password = password and customer.username = username;
-END$$
-
-CREATE DEFINER=`root`@`localhost` PROCEDURE `employee_invoice_detail_payment` (IN `invoice_id` VARCHAR(255), IN `cc_no` VARCHAR(255), IN `amount` FLOAT, IN `date` DATE)  MODIFIES SQL DATA
-BEGIN
-insert into payment(Invoice_ID, Amount, Date) values(invoice_id, amount, date);
-DO SLEEP(0.2);
-insert into paid_with values(cc_no,LAST_INSERT_ID(),invoice_id);
-END$$
-
-CREATE DEFINER=`root`@`localhost` PROCEDURE `customerbookingpost` (IN `customerID` VARCHAR(255), IN `roomNumber` VARCHAR(255), IN `checkInDate` DATE, IN `checkOutDate` DATE, IN `ccNumber` VARCHAR(255), IN `ccName` VARCHAR(255), IN `ccExpiry` DATE, IN `cvv` INT, IN `ccAddress` VARCHAR(255), IN `ccPostal` VARCHAR(255))  NO SQL
+CREATE DEFINER=`root`@`localhost` PROCEDURE `customerbookingpost` (IN `customerID` int(11), IN `roomNumber` int(11), IN `checkInDate` DATE, IN `checkOutDate` DATE, IN `ccNumber` VARCHAR(255), IN `ccName` VARCHAR(255), IN `ccExpiry` DATE, IN `cvv` INT, IN `ccAddress` VARCHAR(255), IN `ccPostal` VARCHAR(255))  NO SQL
 BEGIN
 
 SET @total = (
@@ -136,11 +92,274 @@ VALUES ("1", roomNumber, @booking_number, customerID);
 
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `servicesget`(IN `hotel` VARCHAR(255))
-    NO SQL
+CREATE DEFINER=`root`@`localhost` PROCEDURE `customerinvoicedetailcharges` (IN `invoiceID` int(11))  NO SQL
+SELECT charge.Description, charge.Price, charge.Tax, charge.ChargeTime
+FROM charge
+WHERE charge.Invoice_ID=invoiceID$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `customerinvoicedetailpayments` (IN `invoiceID` int(11))  NO SQL
+SELECT payment.Transaction_Number, paid_with.CC_Number, payment.Amount, payment.Date
+FROM (payment JOIN paid_with ON payment.Transaction_Number=paid_with.Transaction_Number AND payment.Invoice_ID=paid_with.Invoice_ID)
+WHERE paid_with.Invoice_ID=invoiceID$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `customerinvoiceget` (IN `customerID` int(11))  NO SQL
+SELECT invoice.Invoice_ID, invoice.Format, invoice.Date_created, invoice.Date_due, booking.Number as booking_no, SUM(charge.Price + charge.Tax) as total, payments.TotalAmount as total_paid
+FROM (((invoice JOIN booking ON invoice.Invoice_ID=booking.Invoice_ID)
+      JOIN charge ON invoice.Invoice_ID=charge.Invoice_ID)
+      		JOIN (
+                SELECT payment.Invoice_ID, SUM(payment.Amount) as TotalAmount
+                FROM payment
+                GROUP BY payment.Invoice_ID) payments ON invoice.Invoice_ID=payments.Invoice_ID)
+WHERE booking.Customer_ID=customerID
+
+GROUP BY Invoice_ID$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `customerloginget` (IN `username` VARCHAR(255), IN `password` VARCHAR(255))  NO SQL
+SELECT Customer_ID
+FROM customer
+WHERE customer.Username = username AND customer.Password = password$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `employeebookingsget` (IN `hotelID` int(11))  NO SQL
+SELECT booking.Number, booking.Check_In_Date, booking.Check_Out_Date, booked_at.Room_Number, booking.Customer_ID, booking.Invoice_ID, booking.CC_Number
+FROM (booking JOIN booked_at ON booking.Number=booked_at.Booking_Number)
+WHERE booked_at.Hotel_ID = hotelID$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `employeebookingspost` (IN `customerID` int(11), IN `roomNumber` int(11), IN `checkInDate` DATE, IN `checkOutDate` DATE, IN `ccNumber` VARCHAR(255), IN `ccName` VARCHAR(255), IN `ccExpiry` DATE, IN `cvv` INT, IN `ccAddress` VARCHAR(255), IN `ccPostal` VARCHAR(255))  NO SQL
+BEGIN
+
+SET @total = (
+	SELECT room.Rate
+	FROM room
+	WHERE room.Number = roomNumber
+);
+
+SET @tax = (@total * 0.05);
+
+INSERT IGNORE INTO credit_card
+VALUES (ccNumber, ccName, ccExpiry, cvv, ccAddress, ccPostal);
+
+# Might need to make invoice id column an integer for the MAX function
+# Jeff already set it to integer type in his local branch
+
+SET @invoice_id = (SELECT IFNULL(MAX(Invoice_ID) + 1, 1) FROM invoice);
+
+INSERT INTO invoice
+VALUES (@invoice_id, "Digital", CAST(NOW() as date), checkInDate);
+
+SET @charge_id = (SELECT IFNULL(MAX(Charge_ID) + 1, 1) FROM charge);
+
+INSERT INTO charge
+VALUES (@charge_id, @invoice_id, "Room(s) Charge", @tax, @total, NOW());
+
+# Now make booking\
+
+SET @booking_number = (SELECT IFNULL(MAX(Number) + 1, 1) FROM booking);
+
+INSERT INTO booking
+VALUES (@booking_number, customerID, checkOutDate, checkInDate, ccNumber, @invoice_id);
+
+# Now make booked_at
+
+INSERT INTO booked_at
+VALUES ("1", roomNumber, @booking_number, customerID);
+
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `employeebookingsput` (IN `bookingNo` INT, IN `roomNumber` VARCHAR(255), IN `checkInDate` DATE, IN `checkOutDate` DATE, IN `ccNumber` VARCHAR(255), IN `ccName` VARCHAR(255), IN `ccExpiry` DATE, IN `cvv` INT, IN `ccAddress` VARCHAR(255), IN `ccPostal` VARCHAR(255))  NO SQL
+BEGIN
+
+SET @total = (
+	SELECT room.Rate
+	FROM room
+	WHERE room.Number = roomNumber
+);
+
+SET @tax = (@total * 0.05);
+
+INSERT IGNORE INTO credit_card
+VALUES (ccNumber, ccName, ccExpiry, cvv, ccAddress, ccPostal);
+
+# Update invoice date created and due date
+
+SET @invoice_id = (SELECT booking.Invoice_ID from booking where booking.Number=bookingNo);
+
+UPDATE invoice
+SET invoice.Date_created=CAST(NOW() as date), invoice.Date_due=checkInDate
+WHERE invoice.Invoice_ID=@invoice_id;
+
+# Update charge with new total price
+
+SET @charge_id = (SELECT charge.Charge_ID FROM charge WHERE charge.Invoice_ID=@invoice_id);
+
+UPDATE charge
+SET charge.Tax = @tax, charge.Price=@total, charge.ChargeTime=NOW()
+WHERE charge.Description LIKE "Room(s) Charge" AND charge.Invoice_ID=@invoice_id;
+
+# Update booking
+
+UPDATE booking
+SET booking.Check_In_Date=checkInDate, booking.Check_Out_Date=checkOutDate, booking.CC_Number=ccNumber
+WHERE booking.Number = bookingNo;
+
+# Update booked_at
+
+UPDATE booked_at
+SET booked_at.Room_Number=roomNumber
+WHERE booked_at.Booking_Number=bookingNo;
+
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `employeeloginget` (IN `username` VARCHAR(255), IN `password` VARCHAR(255))  NO SQL
+SELECT employee.Employee_ID
+FROM employee
+WHERE employee.Username = username AND employee.Password = password$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `employeeroomsdelete` (IN `hotelID` int(11), IN `roomNo` INT)  NO SQL
+DELETE FROM room
+WHERE room.Hotel_ID=hotelID AND room.Number=roomNo$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `employeeroomsget` (IN `hotel` int(11))  NO SQL
+SELECT *
+FROM room
+WHERE room.Hotel_ID = hotel$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `employeeroomspost` (IN `room_no` int(11), IN `hotelID` int(11), IN `type` VARCHAR(255), IN `beds` VARCHAR(255), IN `floor` VARCHAR(255), IN `furniture` VARCHAR(255), IN `capacity` INT, IN `orientation` VARCHAR(255), IN `rate` FLOAT)  NO SQL
+INSERT IGNORE INTO room
+VALUES (room_no, hotelID, type, beds, floor, furniture, capacity, orientation, rate)$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `employeeroomsput` (IN `room_no` int(11), IN `hotelID` int(11), IN `type` VARCHAR(255), IN `beds` VARCHAR(255), IN `floor` VARCHAR(255), IN `furniture` VARCHAR(255), IN `capacity` INT, IN `orientation` VARCHAR(255), IN `rate` FLOAT)  NO SQL
+UPDATE room
+SET Type=type, Beds=beds, Floor=floor, Furniture=furniture, Capacity=capacity, Orientation=orientation, Rate=rate
+WHERE Number=room_no AND Hotel_ID=hotelID$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `servicesget` (IN `hotel` int(11))  NO SQL
 SELECT service.Description, service.Price
 FROM service
 WHERE service.Hotel_ID = hotel$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `invoice_getall`()
+    READS SQL DATA
+select * 
+from invoice$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `invoice_detail_get_payment`(IN `invoice_id` INT)
+    READS SQL DATA
+SELECT payment.Transaction_Number, paid_with.CC_Number, payment.Amount, payment.Date
+FROM (payment JOIN paid_with ON payment.Transaction_Number=paid_with.Transaction_Number AND payment.Invoice_ID=paid_with.Invoice_ID)
+WHERE paid_with.Invoice_ID=invoice_id$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `invoice_detail_get_charges`(IN `invoice_id` INT)
+    READS SQL DATA
+SELECT *
+FROM charge
+WHERE charge.Invoice_ID=invoice_id$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `employee_invoice_detail_charge`(IN `invoice_id` INT, IN `description` VARCHAR(255), IN `price` FLOAT, IN `charge_time` DATETIME)
+    MODIFIES SQL DATA
+BEGIN
+set @tax = (0.05 * price);
+
+insert into charge(Invoice_ID, Description, Tax, Price, ChargeTime)
+values(invoice_id, description, @tax, price, charge_time);
+
+END$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `employee_invoice_detail_payment`(IN `invoice_id` INT, IN `cc_no` VARCHAR(255), IN `amount` FLOAT, IN `date` DATE)
+    MODIFIES SQL DATA
+BEGIN
+insert into payment(Invoice_ID, Amount, Date) values(invoice_id, amount, date);
+DO SLEEP(0.2);
+insert into paid_with values(cc_no,LAST_INSERT_ID(),invoice_id);
+END$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `invoice_detail_update`(IN `invoice_id` INT, IN `form` VARCHAR(255), IN `date_created` DATE, IN `date_due` DATE)
+    MODIFIES SQL DATA
+update invoice
+set invoice.Format = form, invoice.Date_created=date_created, invoice.Date_due=date_due
+where invoice.Invoice_ID=invoice_id$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `services_delete`(IN `service_id` INT)
+    MODIFIES SQL DATA
+delete FROM service
+where service.Service_ID = service_id$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `services_get`()
+    READS SQL DATA
+select * 
+from service$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `services_post`(IN `hotel_id` INT, IN `description` VARCHAR(255), IN `price` FLOAT)
+    MODIFIES SQL DATA
+insert into service (service.Hotel_ID, service.Description, service.Price)
+values(hotel_id, description, price)$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `services_update`(IN `service_id` INT, IN `hotel_id` INT, IN `description` VARCHAR(255), IN `price` FLOAT)
+    MODIFIES SQL DATA
+update service
+set service.Hotel_ID = hotel_id, service.Description = description, service.Price = price
+where service.Service_ID = service_id$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `bookings_delete`(IN `book_no` INT, IN `hotel_id` INT)
+    MODIFIES SQL DATA
+BEGIN
+
+delete from booked_at
+where booked_at.Hotel_ID = hotel_id and  booked_at.Booking_Number = book_no;
+
+set @invoice_id = (
+    select booking.Invoice_ID 
+    from booking 
+    where booking.Number= book_no);
+
+delete from booking
+where booking.Number = book_no;
+
+delete from paid_with
+where paid_with.Invoice_ID = @invoice_id;
+
+delete from charge
+where charge.Invoice_ID = @invoice_id;
+
+delete from payment
+where payment.Invoice_ID = @invoice_id;
+
+delete from invoice
+where invoice.Invoice_ID = @invoice_id;
+
+END$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `customer_registration_post`(IN `username` VARCHAR(255), IN `password` VARCHAR(255), IN `phone_no` VARCHAR(255), IN `email` VARCHAR(255), IN `birthdate` DATE, IN `name` VARCHAR(255))
+    MODIFIES SQL DATA
+BEGIN
+insert into customer(Username, Password, Phone_Number, Email, Birthdate, Full_Name)
+values(username, password, phone_no, email, birthdate, name);
+
+select Customer_ID
+from customer
+where customer.password = password and customer.username = username;
+END$$
 
 DELIMITER ;
 
@@ -330,13 +549,6 @@ CREATE TABLE `customer` (
   `Full_Name` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
---
--- Dumping data for table `customer`
---
-
-INSERT INTO `customer` (`Customer_ID`, `Username`, `Password`, `Phone_Number`, `Email`, `Birthdate`, `Full_Name`) VALUES
-('0b2aaec7-b6ca-11ec-a833-2cf05d928cb4', 'abc', '123', '123456', 'abcdef@aaa', '2022-01-01', 'hello');
-
 -- --------------------------------------------------------
 
 --
@@ -525,9 +737,6 @@ CREATE TABLE `service` (
   `Price` float NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
---
--- Indexes for dumped tables
---
 
 --
 -- Indexes for table `auth_group`
@@ -747,19 +956,51 @@ ALTER TABLE `django_admin_log`
 -- AUTO_INCREMENT for table `django_content_type`
 --
 ALTER TABLE `django_content_type`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `django_migrations`
 --
 ALTER TABLE `django_migrations`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `payment`
 --
 ALTER TABLE `payment`
-  MODIFY `Transaction_Number` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `Transaction_Number` int(11) NOT NULL AUTO_INCREMENT;
+
+-- AUTO_INCREMENT for table `payment`
+--
+ALTER TABLE `booking`
+  MODIFY `Number` int(11) NOT NULL AUTO_INCREMENT;
+
+-- AUTO_INCREMENT for table `customer`
+--
+ALTER TABLE `customer`
+  MODIFY `Customer_ID` int(11) NOT NULL AUTO_INCREMENT;
+
+
+-- AUTO_INCREMENT for table `employee`
+--
+ALTER TABLE `employee`
+  MODIFY `Employee_ID` int(11) NOT NULL AUTO_INCREMENT;
+
+-- AUTO_INCREMENT for table `hotel`
+--
+ALTER TABLE `hotel`
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT;
+
+-- AUTO_INCREMENT for table `invoice`
+--
+ALTER TABLE `invoice`
+  MODIFY `Invoice_ID` int(11) NOT NULL AUTO_INCREMENT;
+
+
+-- AUTO_INCREMENT for table `service`
+--
+ALTER TABLE `service`
+  MODIFY `Service_ID` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- Constraints for dumped tables
