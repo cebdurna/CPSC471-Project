@@ -134,10 +134,12 @@ SELECT Customer_ID
 FROM customer
 WHERE customer.Username = username AND customer.Password = password$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `employeebookingsget` (IN `hotelID` int(11))  NO SQL
+CREATE DEFINER=`root`@`localhost` PROCEDURE `employeebookingsget`(IN `hotelID` INT(11))
+    NO SQL
 SELECT booking.Number, booking.Check_In_Date, booking.Check_Out_Date, booked_at.Room_Number, booking.Customer_ID, booking.Invoice_ID, booking.CC_Number
 FROM (booking JOIN booked_at ON booking.Number=booked_at.Booking_Number)
-WHERE booked_at.Hotel_ID = hotelID$$
+WHERE booked_at.Hotel_ID = hotelID
+ORDER BY booking.Number$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `employeebookingspost`(IN `customerID` INT(11), IN `roomNumber` INT(11), IN `checkInDate` DATE, IN `checkOutDate` DATE, IN `ccNumber` VARCHAR(255), IN `ccName` VARCHAR(255), IN `ccExpiry` DATE, IN `cvv` INT, IN `ccAddress` VARCHAR(255), IN `ccPostal` VARCHAR(255))
     NO SQL
