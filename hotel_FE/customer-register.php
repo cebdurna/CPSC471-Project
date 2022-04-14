@@ -40,6 +40,9 @@
     {
       echo "<br><font color='red'>Passwords do not match</font>";
     }
+    elseif (empty($_POST['full_name']) || empty($_POST['birthday']) || empty($_POST['phonenumber']) || empty($_POST['email']) || empty($_POST['username']) || empty($_POST['password']) || empty($_POST['confirm_password'])) {
+      echo "<br><font color='red'> Registration failed. Please fill all fields in. </font> ";
+    }
     else
     {
       

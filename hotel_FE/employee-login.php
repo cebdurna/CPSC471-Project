@@ -7,7 +7,7 @@
 
 <body>
 
-<a href="landingPage.php">Return to Homepage</a>
+<a href="landingPage.php">Homepage</a>
 
 <hr />
 
@@ -22,10 +22,10 @@
 <?php
   if(isset($_POST['user_name']) && isset($_POST['password']))
   {
-    $username = $_POST["user_name"];
-    $password = $_POST["password"];
+    $curl = curl_init();
+    $username = curl_escape($curl,$_POST["user_name"]);
+    $password = curl_escape($curl,$_POST["password"]);
     $url = "http://localhost:8000/employee/login?username=" . $username ."&password=" . $password;
-    $curl = curl_init($url);
     curl_setopt($curl, CURLOPT_URL, $url);
     curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
     $response = curl_exec($curl);
@@ -44,7 +44,7 @@
     else{
       echo "<br><font color='red'>Error while Logging In, Please try again. </font>";
     }
-    
+    curl_close($curl);
   }
   
 

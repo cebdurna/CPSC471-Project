@@ -18,8 +18,9 @@
             echo '</p>';
 			echo "<br><h1>Invoice Detail</h1><br>";
 
+            $curl = curl_init();
+            $Invoice_ID = curl_escape($curl,$_POST['Invoice_ID']);
 			$url = "http://localhost:8000/employee/invoice_detail?invoiceID={$Invoice_ID}";
-			$curl = curl_init($url);
 			curl_setopt($curl, CURLOPT_URL, $url);
 			curl_setopt($curl, CURLOPT_GET, 1);
 			curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);

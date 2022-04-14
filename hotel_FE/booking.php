@@ -103,7 +103,7 @@
             <td>" . $furniture . "</td>
             <td>" . $capacity . "</td>
             <td>" . $orientation . "</td>
-            <td>" . $rate . "</td>
+            <td>" . "$" . $rate . "</td>
             <td>
                 <form action=\"booking.php\" method=\"post\">
                     <input type=\"submit\" value=\"Select\"/>

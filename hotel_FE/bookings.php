@@ -124,7 +124,7 @@
             <td>" . $furniture . "</td>
             <td>" . $capacity . "</td>
             <td>" . $orientation . "</td>
-            <td>" . $rate . "</td>
+            <td>" . "$".$rate . "</td>
             <td>
                 <form action=\"bookings.php\" method=\"post\">
                     <input type=\"submit\" value=\"Select\"/>
@@ -135,9 +135,9 @@
                     <input type=\"hidden\" name=\"customerID\" value=\"" . $customerID . "\" />
                 </form>
             </td>
-            </tr>";
-				
-			}
+            </tr>";	
+			} echo "</table>";
+            echo "<br><br>";
         }
 		
 	}
@@ -295,8 +295,7 @@
                         </form>
                         </td>
                         </tr>";
-                        
-                    }
+                    } echo "</table>";
             // else{
             //       echo "<br><font color='red'>Unable to display services</font>" . 'HTTP code: ' . $httpcode;
             // }

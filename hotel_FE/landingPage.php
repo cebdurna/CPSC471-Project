@@ -59,7 +59,7 @@
 	    curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
 	    $response = curl_exec($curl);
 	    $httpcode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
-
+		curl_close($curl);
 	// $response = array(
 	// 	'services' => array(
 	// 		array("description" => 'Description1', "price" => '14.4'),

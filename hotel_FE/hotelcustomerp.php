@@ -27,10 +27,9 @@
             <th>Invoice ID</th>
             <th>Total</th>
             </tr>";
-
-            $customerId = $_COOKIE["userID"];
+            $curl = curl_init();
+            $customerId = curl_escape($curl, $_COOKIE["userID"]);
             $url = "http://localhost:8000/customer/booking?customerID=" . $customerId;
-            $curl = curl_init($url);
             curl_setopt($curl, CURLOPT_URL, $url);
             curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
             $response = curl_exec($curl);
@@ -45,31 +44,27 @@
             //     )
             // );
             // if($httpcode == 200){
-                $response = json_decode($response);
-                    foreach ($response as $booking){
-                        $bookingNumber =  $booking->Number;
-                        $roomNumber =  $booking->Room_Number;
-                        $check_in_date =  $booking->Check_In_Date;
-                        $check_out_date =  $booking->Check_Out_Date;
-                        $cc_number =  $booking->CC_Number;
-                        $invoiceID =  $booking->Invoice_ID;
-                        $total = $booking->Total;
-                        echo "<tr>
-                        <td>" . $bookingNumber . "</td>
-                        <td>" . $roomNumber . "</td>
-                        <td>" . $check_in_date . "</td>
-                        <td>" . $check_out_date . "</td>
-                        <td>" . $cc_number . "</td>
-                        <td>" . $invoiceID . "</td>
-                        <td>" . $total . "</td>
-                        </tr>";
-                        
-                    }
-            // else{
-            //       echo "<br><font color='red'>Unable to display services</font>" . 'HTTP code: ' . $httpcode;
-            // }
-                
-
+            $response = json_decode($response);
+                foreach ($response as $booking){
+                    $bookingNumber =  $booking->Number;
+                    $roomNumber =  $booking->Room_Number;
+                    $check_in_date =  $booking->Check_In_Date;
+                    $check_out_date =  $booking->Check_Out_Date;
+                    $cc_number =  $booking->CC_Number;
+                    $invoiceID =  $booking->Invoice_ID;
+                    $total = $booking->Total;
+                    echo "<tr>
+                    <td>" . $bookingNumber . "</td>
+                    <td>" . $roomNumber . "</td>
+                    <td>" . $check_in_date . "</td>
+                    <td>" . $check_out_date . "</td>
+                    <td>" . $cc_number . "</td>
+                    <td>" . $invoiceID . "</td>
+                    <td>" . "$".round($total,2) . "</td>
+                    </tr>";
+                    
+                }
+            curl_close($curl);
         ?>
         <br>
         <!-- Update functionality to fetch booking matching ID where date is in past--> 
