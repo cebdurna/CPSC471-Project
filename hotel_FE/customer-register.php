@@ -47,17 +47,18 @@
       curl_setopt($curl, CURLOPT_POSTFIELDS, $post);
       $response = curl_exec($curl);
       $httpcode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
-      
-      
-      if($httpcode == 200){
-        $response = json_decode($response);
-        $customerID = $response->customerID;
+      $response = json_decode($response);
+      foreach($response as $cust) {
+        $customerID = $cust->customerID;
+      }
+      if(!empty($customerID)){
         setcookie("userID", $customerID, time()+3600, "/");
+        setcookie("userName", $user_name, time()+3600, "/");
         header("Location: hotelcustomerp.php");
         exit();
       }
-      else{
-        echo "<br><font color='red'>Unable to register, </font>" . 'HTTP code: ' . $httpcode;
+      else {
+        echo "<br><font color='red'>Failed Registration, Please try again with different username. </font>";
       }
       curl_close($curl);
     }
