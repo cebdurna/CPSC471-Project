@@ -47,7 +47,7 @@
 		<p>You can reach us at (444) 323-4673</p>
   	</body>
 	<?php
-	echo "<h1>Available Services at our Hotel</h1>";
+	echo "<h1>Services Available at our Hotel</h1>";
 	echo "<table border='1'> <tr>
 	<th>Description</th>
 	<th>Price</th>
