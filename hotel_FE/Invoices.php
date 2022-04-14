@@ -3,7 +3,6 @@
 		<?php
             echo '<p style="text-align: left;">';
             echo '<a href="landingPage.php">Homepage</a>';
-			echo '&emsp;&emsp;<a href="hotelemployeep.php">Employee Dashboard</a>';
             echo '<span style="float: right;">';
             echo '<a href="hotelemployeep.php">Logged in as '. $_COOKIE["userName"] . '</a>&nbsp; &nbsp; &nbsp';
             echo '<a href="Logout.php">Logout</a>';
@@ -48,14 +47,14 @@
 				<td>" . "$".round($total_paid) . "</td>
 				<td>
 					<form action='InvoiceDetail.php' method='post'>
-						<input type='hidden' name='Invoice_ID' value = '".$Invoice_ID."'>
+						<input type='hidden' name='invoice_id' value = '".$Invoice_ID."'>
 						<input type='hidden' name='Format' value = '". $Format ."'>
 						<input type='hidden' name='Date_created' value = '" . $Date_created ."'>
 						<input type='hidden' name='Date_due' value = '" . $Date_due . "'>
 						<input type='hidden' name='booking_no' value = '" . $booking_no . "'>
 						<input type='hidden' name='total' value = '" . $total . "'>
 						<input type='hidden' name='total_paid' value = '" . $total_paid . "'>
-						<input type='submit' value='Edit'>
+						<input type='submit' value='View/Edit'>
 					</form>
 				</td>
 				</tr>";
