@@ -7,23 +7,17 @@
 
 <body>
 
-    <a href="landingPage.php">Return to Landing Page</a>
-    
-        <span style="float: right;">
-    
-    <a href="Logout.php">Logout</a>
-    
-    </span>
-
-    <hr />
-
-    <H2>Customer Room Booking</H2>
-    
-
-    <br></br>
-    
-	</br>
 	<?php
+        echo "<a href='landingPage.php'>Homepage</a>";
+        echo '&emsp;&emsp;<a href="hotelcustomerp.php">Customer Page</a>';
+        echo "<span style='float: right;'>";
+        echo "<a href='hotelcustomerp.php'>Logged in as ". $_COOKIE['userName'] . "</a>&nbsp; &nbsp; &nbsp";
+        echo "<a href='Logout.php'>Logout</a>";
+        echo "</span>";
+        echo "<hr />";
+        echo "<H2>Customer Room Booking</H2>";
+        echo"<br></br>
+        </br>";
     if (!isset($_POST['startdate'])) {
         echo "
         <p>Please select a check-in and check-out date for your reservation:</p>

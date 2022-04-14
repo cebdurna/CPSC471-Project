@@ -6,7 +6,8 @@
         <?php
                 echo '<p style="text-align: left;">';
                 echo '<a href="landingPage.php">Homepage</a>';
-                echo '<a href="InvoicesCustomer.php">&nbsp; &nbsp; Invoices</a>';
+                echo '&emsp;&emsp;<a href="hotelcustomerp.php">Customer Page</a>';
+                echo '&emsp;&emsp;<a href="InvoicesCustomer.php">Invoices</a>';
                 echo '<span style="float: right;">';
                 echo '<a href="hotelcustomerp.php">Logged in as '. $_COOKIE["userName"] . '</a>&nbsp; &nbsp; &nbsp';
                 echo '<a href="Logout.php">Logout</a>';

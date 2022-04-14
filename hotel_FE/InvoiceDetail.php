@@ -10,6 +10,7 @@
 			$total_paid =  $_POST['total_paid'];
             echo '<p style="text-align: left;">';
             echo '<a href="landingPage.php">Homepage</a>';
+            echo '&emsp;&emsp;<a href="hotelemployeep.php">Employee Dashboard</a>';
             echo '<span style="float: right;">';
             echo '<a href="hotelemployeep.php">Logged in as '. $_COOKIE["userName"] . '</a>&nbsp; &nbsp; &nbsp';
             echo '<a href="Logout.php">Logout</a>';

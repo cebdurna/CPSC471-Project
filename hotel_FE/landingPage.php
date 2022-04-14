@@ -10,6 +10,7 @@
 			{
 				echo '<p style="text-align: left;">';
 				echo '&nbsp; &nbsp; &nbsp';
+				echo '&emsp;&emsp;<a href="hotelemployeep.php">Employee Dashboard</a>';
 				echo '<span style="float: right;">';
 				echo '<a href="hotelemployeep.php">Logged in as '. $_COOKIE["userName"] . '</a>&nbsp; &nbsp; &nbsp';
 				echo '<a href="Logout.php">Logout</a>';
@@ -22,7 +23,7 @@
 			{
 				echo '<p style="text-align: left;">';
 				echo '<a href="hotelcustomerp.php">Book a Room</a>';
-				echo '&nbsp; &nbsp; &nbsp';
+				echo '&emsp;&emsp;<a href="hotelcustomerp.php">Customer Page</a>';
 				echo '<span style="float: right;">';
 				echo '<a href="hotelcustomerp.php">Logged in as '. $_COOKIE["userName"] . '</a>&nbsp; &nbsp; &nbsp';
 				echo '<a href="Logout.php">Logout</a>';
