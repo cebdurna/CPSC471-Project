@@ -11,40 +11,87 @@
     echo '<a href="Logout.php">Logout</a>';
     echo '</span>';
     echo '</p>';
-	
-
 ?>
 
 <?php
-	echo "<h1>SERVICES</h1>";
-	echo "<table border='1'> <tr>
-	<th>DESCRIPTION</th>
-	<th>PRICE</th>
-	</tr>";
-	$servicesURL = "http://localhost:8000/services?hotel=" . $_COOKIE['hotelID'];
-	$curl = curl_init($servicesUrl);
-	    curl_setopt($curl, CURLOPT_URL, $servicesURL);
-	    curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-	    $response = curl_exec($curl);
-	    $httpcode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
 
-	// $response = array(
-	// 	'services' => array(
-	// 		array("description" => 'Description1', "price" => '14.4'),
-	// 	)
-	// );
+    if (!isset($_POST['serviceID'])) {
+            
+        echo "<h1>SERVICES</h1>";
+        echo "<table border='1'> <tr>
+        <th>Description</th>
+        <th>Price</th>
+        <th>Edit</th>
+        <th>Delete</th>
+        </tr>";
+        $servicesURL = "http://localhost:8000/employee/services";
+        $curl = curl_init($servicesUrl);
+            curl_setopt($curl, CURLOPT_URL, $servicesURL);
+            curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+            $response = curl_exec($curl);
+            $httpcode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
 
-	// $response = json_encode($response);
-	// if($httpcode == 200){
-	$response = json_decode($response);
-		foreach ($response as $service){
-			$description =  $service->Description;
-			$price =  $service->Price;
-			echo "<tr>
-			<td>" . $description . "</td>
-			<td>" . "$".$price . "</td>
-			</tr>";
-			}
+        $response = json_decode($response);
+            foreach ($response as $service){
+                $serviceID = $service->Service_ID;
+                $description =  $service->Description;
+                $price =  $service->Price;
+                echo "<tr>
+                <td>" . $description . "</td>
+                <td>" . "$".$price . "</td>
+                <td><form action='Services.php' method='post'>
+                        <input type='submit' value='Edit'>
+                        <input type='hidden' name='serviceID' value='" . $serviceID . "'>
+                        <input type='hidden' name='description' value='" . $description . "'>
+                        <input type='hidden' name='price' value='" . $price . "'>
+                </form></td>
+                <td><form action='Services.php' method='post'>
+                        <input type='hidden' name='serviceID' value='" . $serviceID . "'>
+                        <input type='hidden' name='description' value='" . $description . "'>
+                        <input type='hidden' name='price' value='" . $price . "'>
+                        <input type='hidden' name='delete' value='true'>
+                        <input type='submit' value='Delete'>
+                </form></td>
+                </tr>";
+                }
+    }
+    
+    elseif (isset($_POST['editComplete'])) {
+        $curl = curl_init();
+        
+        $serviceID = curl_escape($curl, $_POST["serviceID"]);
+        $description = curl_escape($curl, $_POST["description"]);
+        $hotelID = curl_escape($curl, $_COOKIE["hotelID"]);
+        $price = curl_escape($curl, $_POST["price"]);
+        
+        $url = "http://localhost:8000/employee/services?service_id={$serviceID}&hotel_id={$hotelID}&description={$description}&price={$price}";
+
+        curl_setopt($curl, CURLOPT_URL, $url);
+        curl_setopt($curl, CURLOPT_PUT, 1);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+        $response = curl_exec($curl);
+        curl_close($curl);
+        
+    }
+    
+    elseif (isset($_POST['serviceID']) && !isset($_POST['delete'])) {
+        $serviceID = $_POST['serviceID'];
+        $description = $_POST['description'];
+        $price = $_POST['price'];
+        
+        echo "<form action='Services.php' method='post'>
+            Service ID: <input type='text' name='serviceID' value='" . $serviceID . "' readonly><br>
+            Description: <input type='text' name='description' value='" . $description . "'><br>
+            Price: <input type='text' name='price' value='" . $price . "'><br>
+            <input type='hidden' name='editComplete' value='true'>
+            <input type='submit' value='Update'>
+        </form>
+        ";
+    }
+    
+    elseif (isset($_POST['serviceID']) && isset($_POST['delete'])) {
+        echo "Delete!";
+    }
 	// else{
 	//       echo "<br><font color='red'>Unable to display services</font>" . 'HTTP code: ' . $httpcode;
 	// }
