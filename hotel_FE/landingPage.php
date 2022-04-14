@@ -21,7 +21,7 @@
 			else
 			{
 				echo '<p style="text-align: left;">';
-				echo '<a href="booking.php">Book a Room</a>';
+				echo '<a href="hotelcustomerp.php">Book a Room</a>';
 				echo '&nbsp; &nbsp; &nbsp';
 				echo '<span style="float: right;">';
 				echo '<a href="hotelcustomerp.php">Logged in as '. $_COOKIE["userName"] . '</a>&nbsp; &nbsp; &nbsp';
@@ -46,4 +46,40 @@
 		<p>We are located at 1105 Chuck Norris Blvd, Atlantis, Babylon S2G S2R.</p>
 		<p>You can reach us at (444) 323-4673</p>
   	</body>
+	<?php
+	echo "<h1>Available Services at our Hotel</h1>";
+	echo "<table border='1'> <tr>
+	<th>Description</th>
+	<th>Price</th>
+	</tr>";
+	$servicesURL = "http://localhost:8000/services?hotel=" . $_COOKIE['hotelID'];
+	$curl = curl_init($servicesUrl);
+	    curl_setopt($curl, CURLOPT_URL, $servicesURL);
+	    curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+	    $response = curl_exec($curl);
+	    $httpcode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+
+	// $response = array(
+	// 	'services' => array(
+	// 		array("description" => 'Description1', "price" => '14.4'),
+	// 	)
+	// );
+
+	// $response = json_encode($response);
+	// if($httpcode == 200){
+	$response = json_decode($response);
+		foreach ($response as $service){
+			$description =  $service->Description;
+			$price =  $service->Price;
+			echo "<tr>
+			<td>" . $description . "</td>
+			<td>" . "$".$price . "</td>
+			</tr>";
+			}
+	// else{
+	//       echo "<br><font color='red'>Unable to display services</font>" . 'HTTP code: ' . $httpcode;
+	// }
+		
+
+?>
 </html>
