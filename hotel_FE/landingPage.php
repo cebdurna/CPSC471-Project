@@ -42,7 +42,7 @@
 			echo '</p>';
 		}
 	?>
-		<h1>OUR PERFECT HOTEL</h1>
+		<h1>OUR PERFECT HOTEL</h1> <img src='hotel.jpg' alt='Hotel'>
 		<p>We are located at 1105 Chuck Norris Blvd, Atlantis, Babylon S2G S2R.</p>
 		<p>You can reach us at (444) 323-4673</p>
   	</body>
