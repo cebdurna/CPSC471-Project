@@ -212,7 +212,7 @@
         
     }
 
-            $hotelID = 1;
+            $hotelID = $_COOKIE['hotelID'];
 			echo "<table border='1'> <tr>
             <th>Booking Number</th>
             <th>Check In Date</th>
