@@ -33,8 +33,8 @@
 		<th>Orientation</th>
 		<th>Rate</th>
 		</tr>";
-		
-		$url = "http://localhost:8000/employee/rooms";
+		$hotelID = $_COOKIE["hotelID"];
+		$url = "http://localhost:8000/employee/rooms?hotel=$hotelID";
 		$curl = curl_init($url);
 		curl_setopt($curl, CURLOPT_URL, $url);
 		curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
@@ -54,16 +54,15 @@
 
 		// if($httpcode == 200){
 		$response = json_decode($response);
-        $hotelID = $_COOKIE['hotelID'];
 		foreach ($response as $room){
-            $roomNumber =  $room->roomNumber;
-            $type =  $room->type;
-            $beds =  $room->beds;
-            $floor =  $room->floor;
-            $furniture =  $room->furniture;
-            $capacity =  $room->capacity;
-            $orientation =  $room->orientation;
-            $rate =  $room->rate;
+            $roomNumber =  $room->Number;
+            $type =  $room->Type;
+            $beds =  $room->Beds;
+            $floor =  $room->Floor;
+            $furniture =  $room->Furniture;
+            $capacity =  $room->Capacity;
+            $orientation =  $room->Orientation;
+            $rate =  $room->Rate;
             echo "<tr>
             <td>" . $roomNumber . "</td>
             <td>" . $hotelID . "</td>
@@ -73,10 +72,9 @@
             <td>" . $furniture . "</td>
             <td>" . $capacity . "</td>
             <td>" . $orientation . "</td>
-            <td>" . $rate . "</td>
-            </tr>";
-				
-			}
+            <td>" . "$".$rate . "</td>
+            </tr>";		
+		}
 		// }
 		// else{
 		//       echo "<br><font color='red'>Unable to display rooms</font>" . 'HTTP code: ' . $httpcode;
