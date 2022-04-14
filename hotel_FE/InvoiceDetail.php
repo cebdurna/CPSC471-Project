@@ -6,8 +6,8 @@
 			$Date_created =  $_POST['Date_created'];
 			$Date_due =  $_POST['Date_due'];
 			$booking_no =  $_POST['booking_no'];
-			$total =  $_POST['total'] + $price =  $_POST['price'];
-			$total_paid =  $_POST['total_paid'];
+			$total =  $_POST['total'] + $_POST['price'];
+			$total_paid =  $_POST['total_paid'] + $_POST['amount'];
 
 			if(isset($_POST['date_due2']))
 			{
@@ -64,6 +64,7 @@
 			}
             echo '<p style="text-align: left;">';
             echo '<a href="landingPage.php">Homepage</a>';
+			echo '&emsp;&emsp;<a href="Invoices.php">Go back to invoices</a>';
             echo '<span style="float: right;">';
             echo '<a href="hotelemployeep.php">Logged in as '. $_COOKIE["userName"] . '</a>&nbsp; &nbsp; &nbsp';
             echo '<a href="Logout.php">Logout</a>';
