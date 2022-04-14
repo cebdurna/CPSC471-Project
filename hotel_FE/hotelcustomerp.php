@@ -27,8 +27,8 @@
             </tr>";
 
             $customerId = $_COOKIE["userID"];
-            $bookingsURL = "http://localhost:8000/customer/booking?customerID=" . $customerId;
-            $curl = curl_init($bookingsURL);
+            $url = "http://localhost:8000/customer/booking?customerID=" . $customerId;
+            $curl = curl_init($url);
             curl_setopt($curl, CURLOPT_URL, $url);
             curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
             $response = curl_exec($curl);
@@ -42,17 +42,16 @@
             //         "cc_number" => 'cc_number', "invoiceID" => 'invoiceID',"total" => 'total'),
             //     )
             // );
-            $response = json_encode($response);
             // if($httpcode == 200){
                 $response = json_decode($response);
-                    foreach ($response->bookings as $booking){
-                        $bookingNumber =  $booking->bookingNumber;
-                        $roomNumber =  $booking->roomNumber;
-                        $check_in_date =  $booking->check_in_date;
-                        $check_out_date =  $booking->check_out_date;
-                        $cc_number =  $booking->cc_number;
-                        $invoiceID =  $booking->invoiceID;
-                        $total =  $booking->total;
+                    foreach ($response as $booking){
+                        $bookingNumber =  $booking->Number;
+                        $roomNumber =  $booking->Room_Number;
+                        $check_in_date =  $booking->Check_In_Date;
+                        $check_out_date =  $booking->Check_Out_Date;
+                        $cc_number =  $booking->CC_Number;
+                        $invoiceID =  $booking->Invoice_ID;
+                        $total = $booking->Total;
                         echo "<tr>
                         <td>" . $bookingNumber . "</td>
                         <td>" . $roomNumber . "</td>

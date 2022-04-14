@@ -26,13 +26,15 @@
 <?php
   if(isset($_POST['full_name']) && isset($_POST['birthday']))
   {
-    $full_name = $_POST['full_name'];
-    $birthday = $_POST['birthday'];
-    $phone_number = $_POST['phonenumber'];
-    $email = $_POST['email'];
-    $user_name = $_POST['username'];
-    $password = $_POST['password'];
-    $confirm_password = $_POST['confirm_password'];
+    $curl = curl_init();
+      
+    $full_name = curl_escape($curl, $_POST['full_name']);
+    $birthday = curl_escape($curl, $_POST['birthday']);
+    $phone_number = curl_escape($curl, $_POST['phonenumber']);
+    $email = curl_escape($curl, $_POST['email']);
+    $user_name = curl_escape($curl, $_POST['username']);
+    $password = curl_escape($curl, $_POST['password']);
+    $confirm_password = curl_escape($curl, $_POST['confirm_password']);
     
     if($password != $confirm_password)
     {
@@ -42,14 +44,14 @@
     {
       
       $url = "http://localhost:8000/customer/registration?username=$user_name&password=$password&phone_no=$phone_number&email=$email&birthdate=$birthday&name=$full_name";
-      $curl = curl_init($url);
+      curl_setopt($curl, CURLOPT_URL, $url);
       curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-      curl_setopt($curl, CURLOPT_POSTFIELDS, $post);
+      curl_setopt($curl, CURLOPT_POST, 1);
       $response = curl_exec($curl);
-      $httpcode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
       $response = json_decode($response);
+      
       foreach($response as $cust) {
-        $customerID = $cust->customerID;
+        $customerID = $cust->Customer_ID;
       }
       if(!empty($customerID)){
         setcookie("userID", $customerID, time()+3600, "/");
