@@ -4,7 +4,7 @@
             echo '<p style="text-align: left;">';
             echo '<a href="landingPage.php">Homepage</a>';
             echo '<span style="float: right;">';
-            echo '<a href="hotelemployeep.php">Logged in as '. $_COOKIE["userName"] . '</a>&nbsp; &nbsp; &nbsp';
+            echo '<a href="hotelcustomerp.php">Logged in as ' . $_COOKIE["userName"] . '</a>&nbsp; &nbsp; &nbsp';
             echo '<a href="Logout.php">Logout</a>';
             echo '</span>';
             echo '</p>';
@@ -20,7 +20,8 @@
 				<th>Total Paid</th>
 				</tr>";
 
-			$url = "http://localhost:8000/employee/invoice";
+			$CustomerID = $_COOKIE["userID"];
+			$url = "http://localhost:8000/customer/invoice?customerID=$CustomerID";
 			$curl = curl_init($url);
 			curl_setopt($curl, CURLOPT_URL, $url);
 			curl_setopt($curl, CURLOPT_GET, 1);
@@ -43,10 +44,10 @@
 				<td>" . $Date_created . "</td>
 				<td>" . $Date_due . "</td>
 				<td>" . $booking_no . "</td>
-				<td>" . "$".round($total) . "</td>
-				<td>" . "$".round($total_paid) . "</td>
+				<td>" . "$".round($total,2) . "</td>
+				<td>" . "$".round($total_paid, 2) . "</td>
 				<td>
-					<form action='InvoiceDetail.php' method='post'>
+					<form action='InvoiceDetailcust.php' method='post'>
 						<input type='hidden' name='Invoice_ID' value = '".$Invoice_ID."'>
 						<input type='hidden' name='Format' value = '". $Format ."'>
 						<input type='hidden' name='Date_created' value = '" . $Date_created ."'>
@@ -54,7 +55,7 @@
 						<input type='hidden' name='booking_no' value = '" . $booking_no . "'>
 						<input type='hidden' name='total' value = '" . $total . "'>
 						<input type='hidden' name='total_paid' value = '" . $total_paid . "'>
-						<input type='submit' value='Edit'>
+						<input type='submit' value='View'>
 					</form>
 				</td>
 				</tr>";

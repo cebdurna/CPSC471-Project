@@ -11,13 +11,13 @@
             echo '<p style="text-align: left;">';
             echo '<a href="landingPage.php">Homepage</a>';
             echo '<span style="float: right;">';
-            echo '<a href="hotelemployeep.php">Logged in as '. $_COOKIE["userName"] . '</a>&nbsp; &nbsp; &nbsp';
+            echo '<a href="hotelcustomerp.php">Logged in as '. $_COOKIE["userName"] . '</a>&nbsp; &nbsp; &nbsp';
             echo '<a href="Logout.php">Logout</a>';
             echo '</span>';
             echo '</p>';
 			echo "<br><h1>Invoice Detail</h1><br>";
 
-			$url = "http://localhost:8000/employee/invoice_detail?invoiceID={$Invoice_ID}";
+			$url = "http://localhost:8000/customer/invoice_detail?invoiceID={$Invoice_ID}";
 			$curl = curl_init($url);
 			curl_setopt($curl, CURLOPT_URL, $url);
 			curl_setopt($curl, CURLOPT_GET, 1);
@@ -42,7 +42,7 @@
 				<td>" . $Date_due . "</td>
 				<td>" . $booking_no . "</td>
 				<td>" . "$".round($total,2) . "</td>
-				<td>" . "$".round($total_paid) . "</td>
+				<td>" . "$".round($total_paid,2) . "</td>
 				</tr></table>";
 
 			echo "<br><h1>Charges</h1><br>";
