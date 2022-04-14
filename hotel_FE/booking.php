@@ -8,10 +8,17 @@
 <body>
 
     <a href="landingPage.php">Return to Landing Page</a>
+    
+        <span style="float: right;">
+    
+    <a href="Logout.php">Logout</a>
+    
+    </span>
 
     <hr />
 
     <H2>Customer Room Booking</H2>
+    
 
     <br></br>
     

@@ -122,7 +122,6 @@
 	}
     elseif (isset($_POST['startdate']) && isset($_POST['enddate']) && isset($_POST['roomnumber']))
     {
-        setcookie("userID", 1);
         if (isset($_POST['cc#']) && isset($_POST['cardName']) && isset($_POST['expiry']) && isset($_POST['cvv']) && isset($_POST['street']) && isset($_POST['postalcode']) && isset($_POST['startdate']) && isset($_POST['enddate']) && isset($_POST['roomnumber'])) {
             if (empty($_POST['cc#']) || empty($_POST['cardName']) || empty($_POST['expiry']) || empty($_POST['cvv']) || empty($_POST['street']) || empty($_POST['postalcode']) || empty($_POST['startdate']) || empty($_POST['enddate']) || empty($_POST['roomnumber'])) {
                         echo "
@@ -206,6 +205,7 @@
             <input type=\"hidden\" name=\"startdate\" value=\"" . $_POST['startdate'] . "\" />
             <input type=\"hidden\" name=\"enddate\" value=\"" . $_POST['enddate'] . "\" />
             <input type=\"hidden\" name=\"rate\" value=\"" . $rate . "\" />
+            <input type=\"hidden\" name=\"customerID\" value=\"" . $_POST['customerID'] . "\" />
             <button type=\"submit\">Complete Booking</button>
             </form>";
         }
