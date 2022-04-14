@@ -1,152 +1,96 @@
-<!DOCTYPE html>
 <html>
 	<body>
-		<p style="text-align: left;"><a title="placeholder link" href="placeholder%10link">Home Page</a>&emsp;&emsp;<a title="placeholder link" href="placeholder%10link">Employee Dashboard</a> <span style="float: right;"><a title="placeholderURL" href="placeholderURL">Logged in as Employee1</a></span>
-		</p>
-			<table style="border-collapse: collapse; width: 100%; height: 117px;" border="1">
-				<tbody>
-						<tr style="height: 66px;">
-							<th style="width: 20%; text-align: center; height: 66px;">
-							<h3>Invoice</h3>
-							</th>
-							<td style="width: 10%; text-align: center; height: 66px;">
-							<h3>Invoice ID</h3>
-							</td>
-							<td style="width: 10%; height: 66px; text-align: center;">
-							<h3 style="text-align: center;">Format</h3>
-							</td>
-							<td style="width: 10%; height: 66px; text-align: center;">
-							<h3 style="text-align: center;">Date Created</h3>
-							</td>
-							<td style="width: 10%; text-align: center; height: 66px;">
-							<h3 style="text-align: center;">Due Date</h3>
-							</td>
-							<td style="width: 10%; text-align: center; height: 66px;">
-							<h3 style="text-align: center;">Booking No</h3>
-							</td>
-							<td style="width: 10%; text-align: center; height: 66px;">
-							<h3 style="text-align: center;">Total Amount</h3>
-							</td>
-							<td style="width: 10%; text-align: center; height: 66px;">
-							<h3 style="text-align: center;">Paid Amount</h3>
-							</td>
-							<td style="width: 10%; text-align: center; height: 66px;">
-							<h3 style="text-align: center;">Edit</h3>
-							</td>
-						</tr>
-						<tr style="height: 51px;">
-							<td style="width: 20%; height: 51px; text-align: center;">
-							<h3><a title="placeHolder" href="placeHolder">Invoice1</a></h3>
-							</td>
-							<td style="width: 10%; height: 51px; text-align: center;">0100440</td>
-							<td style="width: 10%; height: 51px; text-align: center;">E-mail</td>
-							<td style="width: 10%; height: 51px; text-align: center;">March 28th, 2022&nbsp;</td>
-							<td style="width: 10%; height: 51px; text-align: center;">March 30th, 2022&nbsp;</td>
-							<td style="width: 10%; text-align: center; height: 51px;">
-							<p style="text-align: center;">12424</p>
-							</td>
-							<td style="width: 10%; text-align: center; height: 51px;">
-							<p style="text-align: center;">$1050</p>
-							</td>
-							<td style="width: 10%; text-align: center; height: 51px;">
-							<p style="text-align: center;">$900</p>
-							</td>
-							<td style="width: 10%; text-align: center; height: 51px;">
-							<p style="text-align: center;"><a title="placeHolder " href="placeHolder%10">Edit</a></p>
-							</td>
-						</tr>
-					</tbody>
-				</table>
-			<p>&nbsp;</p>
-			<h2>Charges</h2>
-				<table style="border-collapse: collapse; width: 100%; height: 90px;" border="1">
-					<tbody>
-						<tr style="height: 18px;">
-							<td style="width: 10%; height: 18px; text-align: center;">
-							<h3>Description</h3>
-							</td>
-							<td style="width: 10%; height: 18px; text-align: center;">
-							<h3>Price</h3>
-							</td>
-							<td style="width: 10%; height: 18px; text-align: center;">
-							<h3>Tax</h3>
-							</td>
-							<td style="width: 10%; height: 18px; text-align: center;">
-							<h3>Date</h3>
-							</td>
-							<td style="width: 10%; height: 18px; text-align: center;">
-							<h3>Time</h3>
-							</td>
-						</tr>
-						<tr style="height: 18px;">
-							<td style="width: 10%; height: 18px; text-align: center;">2 Nights King Room</td>
-							<td style="width: 10%; height: 18px; text-align: center;">$300</td>
-							<td style="width: 10%; height: 18px; text-align: center;">$15</td>
-							<td style="width: 10%; height: 18px; text-align: center;">March 28th, 2022</td>
-							<td style="width: 10%; height: 18px; text-align: center;">03:00 PM</td>
-						</tr>
-						<tr style="height: 18px;">
-							<td style="width: 10%; height: 18px; text-align: center;">2 Knights Queen Room</td>
-							<td style="width: 10%; height: 18px; text-align: center;">$300</td>
-							<td style="width: 10%; height: 18px; text-align: center;">$15</td>
-							<td style="width: 10%; height: 18px; text-align: center;">March 28th, 2022</td>
-							<td style="width: 10%; height: 18px; text-align: center;">03:00 PM</td>
-						</tr>
-						<tr style="height: 18px;">
-							<td style="width: 10%; height: 18px; text-align: center;">2 Knights Queen Room</td>
-							<td style="width: 10%; height: 18px; text-align: center;">$300</td>
-							<td style="width: 10%; height: 18px; text-align: center;">$15</td>
-							<td style="width: 10%; height: 18px; text-align: center;">March 28th, 2022</td>
-							<td style="width: 10%; height: 18px; text-align: center;">03:00 PM</td>
-						</tr>
-						<tr style="height: 18px;">
-							<td style="width: 10%; text-align: center; height: 18px;">Airport Pickup for 6</td>
-							<td style="width: 10%; text-align: center; height: 18px;">$100</td>
-							<td style="width: 10%; text-align: center; height: 18px;">$5</td>
-							<td style="width: 10%; text-align: center; height: 18px;">March 23rd, 2022</td>
-							<td style="width: 10%; text-align: center; height: 18px;">12:00 PM</td>
-						</tr>
-					</tbody>
-				</table>
-				<a title="placeholder link" href="placeholder%10link">New Charge</a>
-			<p>&nbsp;</p>
-			<h2>Payments</h2>
-				<table style="border-collapse: collapse; width: 100%; height: 90px;" border="1">
-					<tbody>
-						<tr style="height: 18px;">
-							<td style="width: 10%; height: 18px; text-align: center;">
-							<h3>Transaction#</h3>
-							</td>
-							<td style="width: 5%; text-align: center;">
-							<h3>CC Number</h3>
-							</td>
-							<td style="width: 5%; height: 18px; text-align: center;">
-							<h3>Amount</h3>
-							</td>
-							<td style="width: 10%; height: 18px; text-align: center;">
-							<h3>Tax</h3>
-							</td>
-							<td style="width: 10%; height: 18px; text-align: center;">
-							<h3>Date</h3>
-							</td>
-							<td style="width: 10%; height: 18px; text-align: center;">
-							<h3>Time</h3>
-							</td>
-						</tr>
-						<tr style="height: 18px;">
-							<td style="width: 10%; height: 18px; text-align: center;">12459237</td>
-							<td style="width: 5%; text-align: center;">
-							<div>
-							<div>4728***0978</div>
-							</div>
-							</td>
-							<td style="width: 5%; height: 18px; text-align: center;">$900</td>
-							<td style="width: 10%; height: 18px; text-align: center;">$45</td>
-							<td style="width: 10%; height: 18px; text-align: center;">March 28th, 2022</td>
-							<td style="width: 10%; height: 18px; text-align: center;">03:10 PM</td>
-						</tr>
-					</tbody>
-				</table>
-				<a title="placeholder link" href="placeholder%10link">New Payment</a>
-  	</body>
+		<?php
+			$Invoice_ID =  $_POST['Invoice_ID'];
+			$Format =  $_POST['Format'];
+			$Date_created =  $_POST['Date_created'];
+			$Date_due =  $_POST['Date_due'];
+			$booking_no =  $_POST['booking_no'];
+			$total =  $_POST['total'];
+			$total_paid =  $_POST['total_paid'];
+            echo '<p style="text-align: left;">';
+            echo '<a href="landingPage.php">Landing Page</a>';
+			echo '&emsp;&emsp;<a href="hotelemployeep.php">Employee Dashboard</a>';
+            echo '<span style="float: right;">';
+            echo '<a href="hotelemployeep.php">Logged in as'. $_COOKIE["userName"] . '</a>&nbsp; &nbsp; &nbsp';
+            echo '<a href="logoutlink">Logout</a>';
+            echo '</span>';
+            echo '</p>';
+			echo "<br><h1>Invoice Detail</h1><br>";
+
+			$url = "http://localhost:8000/customer/invoice_detail?invoiceID={$Invoice_ID}";
+			$curl = curl_init($url);
+			curl_setopt($curl, CURLOPT_URL, $url);
+			curl_setopt($curl, CURLOPT_GET, 1);
+			curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+			$response = curl_exec($curl);
+			curl_close($curl);
+			$response = json_decode($response);
+
+			echo "<table border='1'> <tr>
+				<th>Invoice ID</th>
+				<th>Format</th>
+				<th>Date Created</th>
+				<th>Date Due</th>
+				<th>Booking No</th>
+				<th>Total</th>
+				<th>Total Paid</th>
+				</tr>";
+			echo "<tr>
+				<td>" . $Invoice_ID . "</td>
+				<td>" . $Format . "</td>
+				<td>" . $Date_created . "</td>
+				<td>" . $Date_due . "</td>
+				<td>" . $booking_no . "</td>
+				<td>" . $total . "</td>
+				<td>" . $total_paid . "</td>
+				</tr></table>";
+
+			echo "<br><h1>Charges</h1><br>";
+			echo "<table border='1'> <tr>
+				<th>Description ID</th>
+				<th>Price</th>
+				<th>Tax</th>
+				<th>Date and Time</th>
+				</tr>";
+			
+			echo "<br>";
+			
+			foreach ($response->Charges as $charge){
+				$Description =  $charge->Description;
+				$Price =  $charge->Price;
+				$Tax =  $charge->Tax;
+				$ChargeTime =  $charge->ChargeTime;
+				echo "<tr>
+				<td>" . $Description . "</td>
+				<td>" . $Price . "</td>
+				<td>" . $Tax . "</td>
+				<td>" . $ChargeTime . "</td>
+				</tr>";
+			}
+			
+
+			echo "</table><br><h1>Payments</h1><br>";
+			echo "<table border='1'> <tr>
+			<th>Transaction #</th>
+			<th>CC Number</th>
+			<th>Amount</th>
+			<th>Date</th>
+			</tr>";
+			foreach ($response->Payments as $payment){
+				$Transaction_Number =  $payment->Transaction_Number;
+				$CC_Number =  $payment->CC_Number;
+				$Amount =  $payment->Amount;
+				$Date =  $payment->Date;
+				echo "<tr>
+				<td>" . $Transaction_Number . "</td>
+				<td>" . $CC_Number . "</td>
+				<td>" . $Amount . "</td>
+				<td>" . $Date . "</td>
+				</tr>";
+			}
+			echo "</table>";
+		?>
+
+	</body>
 </html>
