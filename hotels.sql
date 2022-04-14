@@ -41,8 +41,9 @@ WHERE NOT EXISTS (
     WHERE (checkOutDate > booking.Check_In_Date AND checkInDate < booking.Check_Out_Date) AND room2.Number = room.Number
 )$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `customerbookingget` (IN `customerID` int(11))  NO SQL
-SELECT booking.Number, booked_at.Room_Number, booking.Check_In_Date, booking.Check_Out_Date, booking.CC_Number, booking.Invoice_ID, Sum(charge.Tax + charge.Price)
+CREATE DEFINER=`root`@`localhost` PROCEDURE `customerbookingget`(IN `customerID` INT(11))
+    NO SQL
+SELECT booking.Number, booked_at.Room_Number, booking.Check_In_Date, booking.Check_Out_Date, booking.CC_Number, booking.Invoice_ID, Sum(charge.Tax + charge.Price) as Total
 
 FROM (((booking JOIN booked_at ON booking.Number=booked_at.Booking_Number AND booking.Customer_ID=booked_at.Customer_ID)
      	JOIN room ON room.Number=booked_at.Room_Number AND room.Hotel_ID=booked_at.Hotel_ID)
