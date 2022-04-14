@@ -53,7 +53,8 @@ WHERE booking.Customer_ID=customerID
 
 GROUP BY Invoice_ID$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `customerbookingpost` (IN `customerID` int(11), IN `roomNumber` int(11), IN `checkInDate` DATE, IN `checkOutDate` DATE, IN `ccNumber` VARCHAR(255), IN `ccName` VARCHAR(255), IN `ccExpiry` DATE, IN `cvv` INT, IN `ccAddress` VARCHAR(255), IN `ccPostal` VARCHAR(255))  NO SQL
+CREATE DEFINER=`root`@`localhost` PROCEDURE `customerbookingpost`(IN `customerID` INT(11), IN `roomNumber` INT(11), IN `checkInDate` DATE, IN `checkOutDate` DATE, IN `ccNumber` VARCHAR(255), IN `ccName` VARCHAR(255), IN `ccExpiry` DATE, IN `cvv` INT, IN `ccAddress` VARCHAR(255), IN `ccPostal` VARCHAR(255))
+    NO SQL
 BEGIN
 
 SET @total = (
@@ -86,6 +87,18 @@ SET @booking_number = (SELECT IFNULL(MAX(Number) + 1, 1) FROM booking);
 
 INSERT INTO booking
 VALUES (@booking_number, customerID, checkOutDate, checkInDate, ccNumber, @invoice_id);
+
+# Now make payment
+
+INSERT INTO payment (Invoice_ID, Amount, Date)
+VALUES (@invoice_id, 0, CAST(NOW() as date));
+
+SET @transaction_id = LAST_INSERT_ID();
+
+# Now make paid with
+
+INSERT INTO paid_with (CC_Number, Transaction_Number, Invoice_ID)
+VALUES (ccNumber, @transaction_id, @invoice_id);
 
 # Now make booked_at
 
@@ -126,7 +139,8 @@ SELECT booking.Number, booking.Check_In_Date, booking.Check_Out_Date, booked_at.
 FROM (booking JOIN booked_at ON booking.Number=booked_at.Booking_Number)
 WHERE booked_at.Hotel_ID = hotelID$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `employeebookingspost` (IN `customerID` int(11), IN `roomNumber` int(11), IN `checkInDate` DATE, IN `checkOutDate` DATE, IN `ccNumber` VARCHAR(255), IN `ccName` VARCHAR(255), IN `ccExpiry` DATE, IN `cvv` INT, IN `ccAddress` VARCHAR(255), IN `ccPostal` VARCHAR(255))  NO SQL
+CREATE DEFINER=`root`@`localhost` PROCEDURE `employeebookingspost`(IN `customerID` INT(11), IN `roomNumber` INT(11), IN `checkInDate` DATE, IN `checkOutDate` DATE, IN `ccNumber` VARCHAR(255), IN `ccName` VARCHAR(255), IN `ccExpiry` DATE, IN `cvv` INT, IN `ccAddress` VARCHAR(255), IN `ccPostal` VARCHAR(255))
+    NO SQL
 BEGIN
 
 SET @total = (
@@ -152,6 +166,18 @@ SET @charge_id = (SELECT IFNULL(MAX(Charge_ID) + 1, 1) FROM charge);
 
 INSERT INTO charge
 VALUES (@charge_id, @invoice_id, "Room(s) Charge", @tax, @total, NOW());
+
+# Now make payment
+
+INSERT INTO payment (Invoice_ID, Amount, Date)
+VALUES (@invoice_id, 0, CAST(NOW() as date));
+
+SET @transaction_id = LAST_INSERT_ID();
+
+# Now make paid with
+
+INSERT INTO paid_with (CC_Number, Transaction_Number, Invoice_ID)
+VALUES (ccNumber, @transaction_id, @invoice_id);
 
 # Now make booking\
 

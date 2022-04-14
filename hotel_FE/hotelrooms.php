@@ -167,9 +167,9 @@
                         <input type = 'submit' value = 'Edit'>
                         <input type = 'hidden' name = 'RoomNumber' value=$roomNumber>
                         <input type = 'hidden' name = 'Type' value=$type>
-                        <input type = 'hidden' name = 'Beds' value=$beds>
+                        <input type = 'hidden' name = 'Beds' value='". $beds ."'>
                         <input type = 'hidden' name = 'Floor' value=$floor>
-                        <input type = 'hidden' name = 'Furniture' value=$furniture>
+                        <input type = 'hidden' name = 'Furniture' value='". $furniture ."'>
                         <input type = 'hidden' name = 'Capacity' value=$capacity>
                         <input type = 'hidden' name = 'Orientation' value=$orientation>
                         <input type = 'hidden' name = 'Rate' value=$rate>
