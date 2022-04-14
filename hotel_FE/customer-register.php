@@ -6,7 +6,7 @@
 
 <body>
 
-<a href="landingPage.php">Return to Landing Page</a>
+<a href="landingPage.php">Return to Homepage</a>
 
 <hr />
 
@@ -36,19 +36,12 @@
     
     if($password != $confirm_password)
     {
-      echo "<br><font color='red'>Paswords do not match</font>";
+      echo "<br><font color='red'>Passwords do not match</font>";
     }
     else
     {
-      $post = ["username"=>$user_name,
-      "password"=> $password,
-      "name"=>$full_name,
-      "birthdate"=>$birthday,
-      "phone_no"=>$phone_number,
-      "email"=>$email,
-      ];
-
-      $url = "http://localhost:8000/customer/registration";
+      
+      $url = "http://localhost:8000/customer/registration?username=$user_name&password=$password&phone_no=$phone_number&email=$email&birthdate=$birthday&name=$full_name";
       $curl = curl_init($url);
       curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
       curl_setopt($curl, CURLOPT_POSTFIELDS, $post);

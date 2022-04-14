@@ -7,15 +7,6 @@ from rest_framework.exceptions import APIException
 
 # Create your views here.
 
-class Booking(APIView):
-    def get(self, request):
-        #if request.query_params["jwt"]
-        with connection.cursor() as cursor:
-            cursor.callproc('')
-            dicts = dictfetchall(cursor)
-            return Response(dicts)
-        return Response()
-
 
 class Registration(APIView):
     def post(self, request):

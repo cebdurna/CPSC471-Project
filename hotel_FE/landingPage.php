@@ -2,6 +2,7 @@
 <html>
 	<body>
 	<?php
+		setcookie("hotelID", "1", time()+3600, "/");
 		if (isset($_COOKIE["userName"]))
 		{	
 			// Employee case
@@ -11,8 +12,8 @@
 				echo '&nbsp; &nbsp; &nbsp';
 				echo '<a href="Services.php">Services Offerred</a>';
 				echo '<span style="float: right;">';
-				echo '<a href="hotelemployeep.php">Logged in as'. $_COOKIE["userName"] . '</a>&nbsp; &nbsp; &nbsp';
-				echo '<a href="hotelemployeep.php">Employee Dashboard</a>';
+				echo '<a href="hotelemployeep.php">Logged in as '. $_COOKIE["userName"] . '</a>&nbsp; &nbsp; &nbsp';
+				echo '<a href="Logout.php">Logout</a>';
 				echo '</span>';
 				echo '</p>';
 			}
@@ -25,8 +26,8 @@
 				echo '&nbsp; &nbsp; &nbsp';
 				echo '<a href="Services.php">Services Offerred</a>';
 				echo '<span style="float: right;">';
-				echo '<a href="hotelcustomerp.php">Logged in as'. $_COOKIE["userName"] . '</a>&nbsp; &nbsp; &nbsp';
-				echo '<a href="hotelcustomerp.php">Customer Page</a>';
+				echo '<a href="hotelcustomerp.php">Logged in as '. $_COOKIE["userName"] . '</a>&nbsp; &nbsp; &nbsp';
+				echo '<a href="Logout.php">Logout</a>';
 				echo '</span>';
 				echo '</p>';
 			}

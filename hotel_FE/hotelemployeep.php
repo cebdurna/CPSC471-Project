@@ -8,8 +8,8 @@
             echo '<p style="text-align: left;">';
             echo '<a href="landingPage.php">Landing Page</a>';
             echo '<span style="float: right;">';
-            echo '<a href="hotelemployeep.php">Logged in as'. $_COOKIE["userName"] . '</a>&nbsp; &nbsp; &nbsp';
-            echo '<a href="logoutlink">Logout</a>';
+            echo '<a href="hotelemployeep.php">Logged in as '. $_COOKIE["userName"] . '</a>&nbsp; &nbsp; &nbsp';
+            echo '<a href="Logout.php">Logout</a>';
             echo '</span>';
             echo '</p>';
         ?>

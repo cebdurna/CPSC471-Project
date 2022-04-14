@@ -8,8 +8,8 @@
             echo '<a href="landingPage.php">Landing Page</a>';
 			echo '&emsp;&emsp;<a href="hotelemployeep.php">Employee Dashboard</a>';
             echo '<span style="float: right;">';
-            echo '<a href="hotelemployeep.php">Logged in as'. $_COOKIE["userName"] . '</a>&nbsp; &nbsp; &nbsp';
-            echo '<a href="logoutlink">Logout</a>';
+            echo '<a href="hotelemployeep.php">Logged in as '. $_COOKIE["userName"] . '</a>&nbsp; &nbsp; &nbsp';
+            echo '<a href="Logout.php">Logout</a>';
             echo '</span>';
             echo '</p>';
         ?>
@@ -26,7 +26,7 @@
 		<th>Room Number</th>
         <th>Hotel ID</th>
 		<th>Room Type</th>
-		<th>Number of Beds</th>
+		<th>Beds</th>
 		<th>Floor</th>
 		<th>Furniture</th>
 		<th>Capacity</th>
@@ -42,37 +42,39 @@
 		$httpcode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
 
 		// stub response for thesting
-		$response = array(
-			'rooms' => array(
-				array("room_no" => 'room_no', "hotelID" => 'hotelID', "type" => 'type',
-				"beds" => 'beds', "floor" => 'floor',
-				"furniture" => 'furniture', "capacity" => 'capacity',
-				"orientation" => 'orientation', 'rate' => 'rate'),
-			)
-		);
-		$response = json_encode($response);
+		// $response = array(
+		// 	'rooms' => array(
+		// 		array("room_no" => 'room_no', "hotelID" => 'hotelID', "type" => 'type',
+		// 		"beds" => 'beds', "floor" => 'floor',
+		// 		"furniture" => 'furniture', "capacity" => 'capacity',
+		// 		"orientation" => 'orientation', 'rate' => 'rate'),
+		// 	)
+		// );
+		// $response = json_encode($response);
 
 		// if($httpcode == 200){
-			$response = json_decode($response);
-			foreach ($response->rooms as $room){
-				$roomNumber =  $room->roomNumber;
-				$type =  $room->type;
-				$beds =  $room->beds;
-				$floor =  $room->floor;
-				$furniture =  $room->furniture;
-				$capacity =  $room->capacity;
-				$orientation =  $room->orientation;
-				$rate =  $room->rate;
-				echo "<tr>
-				<td>" . $roomNumber . "</td>
-				<td>" . $type . "</td>
-				<td>" . $beds . "</td>
-				<td>" . $floor . "</td>
-				<td>" . $furniture . "</td>
-				<td>" . $capacity . "</td>
-				<td>" . $orientation . "</td>
-				<td>" . $rate . "</td>
-				</tr>";
+		$response = json_decode($response);
+        $hotelID = $_COOKIE['hotelID'];
+		foreach ($response as $room){
+            $roomNumber =  $room->roomNumber;
+            $type =  $room->type;
+            $beds =  $room->beds;
+            $floor =  $room->floor;
+            $furniture =  $room->furniture;
+            $capacity =  $room->capacity;
+            $orientation =  $room->orientation;
+            $rate =  $room->rate;
+            echo "<tr>
+            <td>" . $roomNumber . "</td>
+            <td>" . $hotelID . "</td>
+            <td>" . $type . "</td>
+            <td>" . $beds . "</td>
+            <td>" . $floor . "</td>
+            <td>" . $furniture . "</td>
+            <td>" . $capacity . "</td>
+            <td>" . $orientation . "</td>
+            <td>" . $rate . "</td>
+            </tr>";
 				
 			}
 		// }
@@ -82,7 +84,7 @@
     ?>
         
 
-        <table style="border-collapse: collapse; width: 100%; height: 117px;" border="1">
+        <!-- <table style="border-collapse: collapse; width: 100%; height: 117px;" border="1">
             <tbody> 
                 <tr style="height: 66px;">
                     <th style="width: 10%; text-align: center; height: 66px;">
@@ -141,7 +143,7 @@
                         </td>
                     </tr>
             </tbody>
-        </table>
+        </table> -->
     </body>
 </html>
 

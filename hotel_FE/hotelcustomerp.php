@@ -1,4 +1,3 @@
-<?php echo '<link rel="stylesheet" type="text/css" href="style.css" media="screen" />'; ?>
 <html>
     <head>
         <title>Customer Page</title>
@@ -6,10 +5,10 @@
     <body>
         <?php
                 echo '<p style="text-align: left;">';
-                echo '<a href="landingPage.php">Landing Page</a>';
+                echo '<a href="landingPage.php">Homepage</a>';
                 echo '<span style="float: right;">';
-                echo '<a href="hotelcustomerp.php">Logged in as'. $_COOKIE["userName"] . '</a>&nbsp; &nbsp; &nbsp';
-                echo '<a href="logoutlink">Logout</a>';
+                echo '<a href="hotelcustomerp.php">Logged in as '. $_COOKIE["userName"] . '</a>&nbsp; &nbsp; &nbsp';
+                echo '<a href="Logout.php">Logout</a>';
                 echo '</span>';
                 echo '</p>';
             ?>
@@ -36,13 +35,13 @@
             $httpcode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
 
             // stub response for thesting
-            $response = array(
-                'bookings' => array(
-                    array("bookingNumber" => 'bookingNumber', "roomNumber" => 'roomNumber',
-                    "check_in_date" => 'check_in_date', "check_out_date" => 'check_out_date',
-                    "cc_number" => 'cc_number', "invoiceID" => 'invoiceID',"total" => 'total'),
-                )
-            );
+            // $response = array(
+            //     'bookings' => array(
+            //         array("bookingNumber" => 'bookingNumber', "roomNumber" => 'roomNumber',
+            //         "check_in_date" => 'check_in_date', "check_out_date" => 'check_out_date',
+            //         "cc_number" => 'cc_number', "invoiceID" => 'invoiceID',"total" => 'total'),
+            //     )
+            // );
             $response = json_encode($response);
             // if($httpcode == 200){
                 $response = json_decode($response);

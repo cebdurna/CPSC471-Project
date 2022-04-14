@@ -7,7 +7,7 @@
 
 <body>
 
-<a href="landingPage.php">Return to Landing Page</a>
+<a href="landingPage.php">Return to Homepage</a>
 
 <hr />
 
@@ -15,7 +15,7 @@
 
 <form action="customer-login.php" method="post">
    Username: <input type="text" name="user_name" placeholder = "Username"><br>
-   Password: <input type="text" name="password" placeholder="Password"><br>
+   Password: <input type="password" name="password" placeholder="Password"><br>
    <input type="submit" value="Login">
 </form>
 
@@ -33,17 +33,18 @@
     curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
     $response = curl_exec($curl);
     $httpcode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
-    
-    if($httpcode == 200){
-      $response = json_decode($response);
-      $customerID = $response->customerID;
+    $response = json_decode($response);
+    foreach ($response as $customer){
+      $customerID = $customer->Customer_ID;
+    }
+    if(!empty($customerID)){
       setcookie("userID", $customerID, time()+3600, "/");
       setcookie("userName", $username, time()+3600, "/");
       header("Location: hotelcustomerp.php");
       exit();
     }
     else{
-      echo "<br><font color='red'>Unable to log in, </font>" . 'HTTP code: ' . $httpcode;
+      echo "<br><font color='red'>Error while Logging In, Please try again.</font>";
     }
     curl_close($curl);
   }
