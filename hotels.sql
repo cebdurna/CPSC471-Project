@@ -241,8 +241,15 @@ WHERE service.Hotel_ID = hotel$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `invoice_getall`()
     READS SQL DATA
-select * 
-from invoice$$
+SELECT invoice.Invoice_ID, invoice.Format, invoice.Date_created, invoice.Date_due, booking.Number as booking_no, SUM(charge.Price + charge.Tax) as total, payments.TotalAmount as total_paid
+FROM (((invoice JOIN booking ON invoice.Invoice_ID=booking.Invoice_ID)
+      JOIN charge ON invoice.Invoice_ID=charge.Invoice_ID)
+      		JOIN (
+                SELECT payment.Invoice_ID, SUM(payment.Amount) as TotalAmount
+                FROM payment
+                GROUP BY payment.Invoice_ID) payments ON invoice.Invoice_ID=payments.Invoice_ID)
+
+GROUP BY Invoice_ID$$
 DELIMITER ;
 
 DELIMITER $$
