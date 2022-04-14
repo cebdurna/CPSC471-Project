@@ -11,8 +11,28 @@
             echo '</p>';
 
         
+    if (isset($_POST['delete'])) {
+        $curl = curl_init();
         
-    if (!isset($_POST['startdate'])) {
+        $book_no = curl_escape($curl, $_POST["book_no"]);
+        $hotel_id = curl_escape($curl, $_POST["hotel_id"]);
+        
+        $url = "http://localhost:8000/employee/bookings?book_no={$book_no}&hotel_id={$hotel_id}";
+        
+        curl_setopt($curl, CURLOPT_URL, $url);
+        curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "DELETE");
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+        $response = curl_exec($curl);
+        curl_close($curl);
+        
+        echo "<label> Successfully deleted </label>
+        <form action='bookings.php' method='post'>
+            <input type='submit' value='Return to services'>
+        </form>
+        ";
+    }
+    
+    elseif (!isset($_POST['startdate'])) {
         echo "
         <p>Create a booking for a customer:</p>
 	
@@ -26,6 +46,7 @@
         
         ";
     }
+    
 	elseif(isset($_POST['startdate']) && isset($_POST['enddate']) && isset($_POST['customerID']) && !isset($_POST['roomnumber']))
 	{
         echo "
@@ -206,12 +227,13 @@
             <input type=\"hidden\" name=\"enddate\" value=\"" . $_POST['enddate'] . "\" />
             <input type=\"hidden\" name=\"rate\" value=\"" . $rate . "\" />
             <input type=\"hidden\" name=\"customerID\" value=\"" . $_POST['customerID'] . "\" />
+            <input type='hidden' name='add' value='true'>
             <button type=\"submit\">Complete Booking</button>
             </form>";
         }
         
     }
-
+    if (!isset($_POST['delete']) && !isset($_POST['add'])) {
             $hotelID = $_COOKIE['hotelID'];
 			echo "<table border='1'> <tr>
             <th>Booking Number</th>
@@ -221,6 +243,8 @@
             <th>Customer ID</th>
             <th>Invoice ID</th>
 			<th>Credit Card Number</th>
+            <th>Edit</th>
+            <th>Delete</th>
             </tr>";
             $curl = curl_init();
             
@@ -262,6 +286,14 @@
 							<input type='submit' value='Edit'>
 						</form>
 						</td>
+                        <td>
+                        <form action='bookings.php' method='post'>
+                            <input type='hidden' name='book_no' value='" . $booking_no . "'>
+                            <input type='hidden' name='hotel_id' value='" . $_COOKIE['hotelID'] . "'>
+                            <input type='hidden' name='delete' value='true'>
+                            <input type='submit' value='Delete'>
+                        </form>
+                        </td>
                         </tr>";
                         
                     }
@@ -270,7 +302,7 @@
             // }
 
 			
-                
+    }
         ?>
 		
   	</body>
