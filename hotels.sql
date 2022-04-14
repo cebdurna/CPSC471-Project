@@ -30,8 +30,9 @@ DELIMITER $$
 -- Procedures
 --
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `customeravailabilityget` (IN `checkInDate` DATE, IN `checkOutDate` DATE)  NO SQL
-SELECT room.Number
+CREATE DEFINER=`root`@`localhost` PROCEDURE `customeravailabilityget`(IN `checkInDate` DATE, IN `checkOutDate` DATE)
+    NO SQL
+SELECT room.Number, room.Type, room.Beds, room.Floor, room.Furniture, room.Capacity, room.Orientation, room.Rate
 FROM room
 WHERE NOT EXISTS (
 	SELECT room2.Number
@@ -165,7 +166,8 @@ VALUES ("1", roomNumber, @booking_number, customerID);
 
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `employeebookingsput` (IN `bookingNo` INT, IN `roomNumber` VARCHAR(255), IN `checkInDate` DATE, IN `checkOutDate` DATE, IN `ccNumber` VARCHAR(255), IN `ccName` VARCHAR(255), IN `ccExpiry` DATE, IN `cvv` INT, IN `ccAddress` VARCHAR(255), IN `ccPostal` VARCHAR(255))  NO SQL
+CREATE DEFINER=`root`@`localhost` PROCEDURE `employeebookingsput`(IN `bookingNo` INT, IN `roomNumber` VARCHAR(255), IN `checkInDate` DATE, IN `checkOutDate` DATE, IN `ccNumber` VARCHAR(255), IN `ccName` VARCHAR(255), IN `ccExpiry` DATE, IN `cvv` INT, IN `ccAddress` VARCHAR(255), IN `ccPostal` VARCHAR(255))
+    NO SQL
 BEGIN
 
 SET @total = (
@@ -189,7 +191,7 @@ WHERE invoice.Invoice_ID=@invoice_id;
 
 # Update charge with new total price
 
-SET @charge_id = (SELECT charge.Charge_ID FROM charge WHERE charge.Invoice_ID=@invoice_id);
+SET @charge_id = (SELECT charge.Charge_ID FROM charge WHERE charge.Invoice_ID=@invoice_id AND charge.Description LIKE "Room(s) Charge");
 
 UPDATE charge
 SET charge.Tax = @tax, charge.Price=@total, charge.ChargeTime=NOW()
