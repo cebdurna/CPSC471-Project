@@ -136,7 +136,7 @@
 			echo "<br><table border='1'> <tr>
 				<th>Description</th>
 				<th>Price</th>
-				<th>Date and Time</th>
+				<th>Date</th>
 				</tr>";
 			echo "<tr>
 					<form action='invoiceDetail.php' method='post'>
@@ -149,7 +149,7 @@
 						<input type='hidden' name='total_paid' value = '".$total_paid."'>
 						<td><input type='text' name='description' placeholder = 'Description'></td>
 						<td><input type='text' name='price' placeholder = '$111'></td>
-						<td><input type='text' name='charge_time' placeholder = '202X-XX-XXT09:09:09'></td>
+						<td><input type='date' name='charge_time' placeholder = '202X-XX-XXT09:09:09'></td>
 						<td><input type='submit' value='Add new charge'></td>
 					</form>
 				</tr>";
@@ -190,9 +190,9 @@
 						<input type='hidden' name='booking_no' value = '".$booking_no."'>
 						<input type='hidden' name='total' value = '".$total."'>
 						<input type='hidden' name='total_paid' value = '".$total_paid."'>
-						<td><input type='text' name='cc_number' placeholder = '4874 8748 4949 2821'></td>
+						<td><input type='text' name='cc_number' placeholder = '4874 8748 4949 2821' maxlength='19'></td>
 						<td><input type='text' name='amount' placeholder = '$111'></td>
-						<td><input type='text' name='date' placeholder = '202X-XX-XX'></td>
+						<td><input type='date' name='date' placeholder = '202X-XX-XX'></td>
 						<td><input type='submit' value='Add new payment'></td>
 					</form>
 				</tr>";
